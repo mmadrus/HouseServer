@@ -60,5 +60,6 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
-src/
 web/
+
+!.idea

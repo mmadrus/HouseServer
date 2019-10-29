@@ -1,6 +1,6 @@
 package rest;
 
-import rest.service.TempService;
+import rest.service.LoginService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -14,7 +14,7 @@ public class Main extends Application {
     public Set<Class<?>> getClasses () {
 
         HashSet h = new HashSet<Class<?>>();
-        h.add(TempService.class);
+        h.add(LoginService.class);
         return h;
     }
 }

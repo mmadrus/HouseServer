@@ -1,5 +1,6 @@
 package rest;
 
+import rest.service.CommandService;
 import rest.service.LoginService;
 
 import javax.ws.rs.ApplicationPath;
@@ -15,6 +16,7 @@ public class Main extends Application {
 
         HashSet h = new HashSet<Class<?>>();
         h.add(LoginService.class);
+        h.add(CommandService.class);
         return h;
     }
 }

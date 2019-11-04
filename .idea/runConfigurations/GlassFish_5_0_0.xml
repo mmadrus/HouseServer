@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="GlassFish 5.0.0" type="GlassfishConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="GlassFish 5.0.0" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+  <configuration default="false" name="GlassFish 5.0.0" type="GlassfishConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="GlassFish 5.0.0" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true" show_console_on_std_err="true" show_console_on_std_out="true">
     <option name="OPEN_IN_BROWSER" value="false" />
     <option name="UPDATING_POLICY" value="restart-server" />
     <deployment>
@@ -15,7 +15,7 @@
       <option name="USERNAME" value="" />
       <option name="CREDENTIAL_ALIAS" />
     </server-settings>
-    <predefined_log_file enabled="true" id="GlassFish" />
+    <log_file alias="GlassFish Log" path="$PROJECT_DIR$/../Downloads/glassfish5/glassfish/domains/Users/madrusan/Downloads/glassfish5/glassfish/domains/domain1/logs/server.log" skipped="false" />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="9009" />
     </RunnerSettings>

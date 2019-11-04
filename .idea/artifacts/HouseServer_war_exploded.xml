@@ -11,6 +11,7 @@
           <element id="library" level="project" name="org.glassfish.jersey.containers:jersey-container-servlet-core:2.29.1" />
           <element id="library" level="project" name="org.glassfish.jersey.core:jersey-server:2.29.1" />
           <element id="library" level="project" name="org.json:json:20190722" />
+          <element id="library" level="project" name="org.glassfish.jersey.media:jersey-media-json-jackson:2.29.1" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="HouseServer/web/Web" />

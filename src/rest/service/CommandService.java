@@ -3,12 +3,15 @@ package rest.service;
 import org.json.JSONObject;
 
 import javax.ws.rs.*;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 @Path("service/command")
 public class CommandService  {
 
+    @GET
+    public String ok () {
+
+        return "HEJHEJHEJ";
+    }
     @PUT
     public String userRequest (String json) {
 

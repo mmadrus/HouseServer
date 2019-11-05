@@ -14,6 +14,7 @@ public class LoginService {
     private String protocolType, responseString;
     private Response response;
 
+
     @GET
     @Path("ok")
     public String ok () {

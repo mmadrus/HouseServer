@@ -8,11 +8,11 @@
       </artifact>
     </deployment>
     <server-settings>
-      <option name="DOMAIN" value="$PROJECT_DIR$/../Downloads/glassfish5/glassfish/domains/domain1" />
+      <option name="DOMAIN" value="$USER_HOME$/Documents/glassfish5/glassfish/domains/domain1" />
       <option name="PRESERVE" value="false" />
       <option name="COMPATIBILITY" value="false" />
       <option name="VIRTUAL_SERVER" />
-      <option name="USERNAME" value="" />
+      <option name="USERNAME" value="admin1" />
       <option name="CREDENTIAL_ALIAS" />
     </server-settings>
     <log_file alias="GlassFish Log" path="$PROJECT_DIR$/../Downloads/glassfish5/glassfish/domains/Users/madrusan/Downloads/glassfish5/glassfish/domains/domain1/logs/server.log" skipped="false" />

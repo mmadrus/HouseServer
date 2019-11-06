@@ -12,7 +12,10 @@ public class AuthServiceImpl implements IAuthService {
     public AuthServiceImpl(String database, AuthUtils authUtils) {
         this.database = database;
         this.authUtils = authUtils;
+
+
     }
+
 
     @Override
     public String authenticate(String username, String password) throws AuthenticationException {

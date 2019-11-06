@@ -14,14 +14,15 @@ public class LoginService {
     private String protocolType, responseString;
     private Response response;
 
+    private IAuthService authService;
 
     @GET
     @Path("ok")
     public String ok () {
 
-
         return "ok";
     }
+
 
     @POST
     public String protocolCheck (String protocolString) {

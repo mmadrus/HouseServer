@@ -11,6 +11,9 @@
           <element id="library" level="project" name="org.glassfish.jersey.containers:jersey-container-servlet-core:2.29.1" />
           <element id="library" level="project" name="org.glassfish.jersey.core:jersey-server:2.29.1" />
           <element id="library" level="project" name="org.json:json:20190722" />
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="javax.persistence:javax.persistence-api:2.2" />
+          <element id="library" level="project" name="org.mongodb:mongo-java-driver:3.11.1" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="HouseServer/web/Web" />

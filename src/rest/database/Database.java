@@ -25,20 +25,18 @@ public class Database {
     private DBObject fetchedObject;
 
 
-    public static void main(String[] args) {
+    private Database() {
+        mongoClient = new MongoClient("localhost", 27017);
+        databaseObj = mongoClient.getDB("HouseDatabase");
 
+    }
+
+    public void openConnection() {
         Object objectId = Database.getInstance().getDeviceId("1234");
         String status = Database.getInstance().getDeviceStatus(objectId);
         System.out.println(status);
 
         Database.getInstance().findUser("1234-abcd-12dc");
-
-    }
-
-    private Database() {
-        mongoClient = new MongoClient("localhost", 27017);
-        databaseObj = mongoClient.getDB("HouseDatabase");
-
     }
 
 
@@ -105,8 +103,6 @@ public class Database {
         cursor = dbCollection.find(document);
 
         fetchedObject = cursor.next();
-
-
 
         return fetchedObject;
 

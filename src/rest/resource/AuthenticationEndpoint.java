@@ -19,9 +19,12 @@ public class AuthenticationEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateUser(@FormParam("username") String username,
                                      @FormParam("password") String password) {
+        AuthUtils authUtils = new AuthUtils();
+        authService = new AuthServiceImpl("db", authUtils);
+
 
         try {
-            authenticate(username, password);
+            authService.authenticate(username, password);
 
             Token token = new Token();
 
@@ -29,15 +32,5 @@ public class AuthenticationEndpoint {
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-    }
-
-    private void authenticate(String username, String password) throws AuthenticationException {
-
-        AuthUtils authUtils = new AuthUtils();
-        authService = new AuthServiceImpl("db", authUtils);
-
-        authService.authenticate(username, password);
-        //Connect to mongoDB, fetch user and authenticate
-
     }
 }

@@ -26,7 +26,7 @@ public class AuthServiceImpl implements IAuthService {
 
 
     @Override
-    public UserProfileDto authenticate(String username, String password) throws AuthenticationException {
+    public User authenticate(String username, String password) throws AuthenticationException {
         UserProfileDto userProfile = new UserProfileDto();
 
         User userEntity = (User) getUserProfile(username);
@@ -53,7 +53,7 @@ public class AuthServiceImpl implements IAuthService {
         }
 
 
-        return userProfile;
+        return userEntity;
     }
 
     @Override

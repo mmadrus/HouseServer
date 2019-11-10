@@ -1,6 +1,7 @@
 package rest.service;
 
 import rest.database.Database;
+import rest.models.User;
 import rest.models.UserProfileDto;
 import rest.models.UserProfileEntity;
 import rest.utils.AuthUtils;
@@ -28,7 +29,7 @@ public class AuthServiceImpl implements IAuthService {
     public UserProfileDto authenticate(String username, String password) throws AuthenticationException {
         UserProfileDto userProfile = new UserProfileDto();
 
-        UserProfileEntity userEntity = getUserProfile(username);
+        User userEntity = (User) getUserProfile(username);
 
         String securePassword = "";
 
@@ -65,7 +66,7 @@ public class AuthServiceImpl implements IAuthService {
         Object returnValue = null;
         try {
             //connect to database and get userprofile
-             this.database.openConnection();
+             database = Database.getInstance();
              returnValue = this.database.findUser(userName);
         } finally {
             // this.database.closeConnection();

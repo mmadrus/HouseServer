@@ -1,5 +1,6 @@
 package rest.resource;
 
+import rest.database.Database;
 import rest.models.Token;
 import rest.service.AuthServiceImpl;
 import rest.utils.AuthUtils;
@@ -13,14 +14,16 @@ import javax.ws.rs.core.Response;
 public class AuthenticationEndpoint {
 
     AuthServiceImpl authService;
+    Database database;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateUser(@FormParam("username") String username,
                                      @FormParam("password") String password) {
+        database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
-        authService = new AuthServiceImpl("db", authUtils);
+        authService = new AuthServiceImpl(database, authUtils);
 
 
         try {

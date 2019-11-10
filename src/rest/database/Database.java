@@ -46,7 +46,6 @@ public class Database {
         System.out.println("MongoObjectId " + mongoObjectId.toString());
         database.changeStatusOfDevice(mongoObjectId);
 */
-
         System.out.println(database.createUser("hej"));
     }
 

@@ -1,26 +1,39 @@
 package rest.service;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.ByteBuffer;
 
 public class HardwareService extends Thread {
 
+    private static HardwareService hardwareService;
     private SerialPort serialPort;
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
+    private BufferedReader inputStream;
+    private OutputStream outputStream;
     private String arudinoResponse;
+    private boolean pause = false;
 
-    public HardwareService () {
+    private HardwareService () {
 
-        this.serialPort = SerialPort.getCommPort("");
-        this.inputStream = new DataInputStream(serialPort.getInputStream());
-        this.outputStream = new DataOutputStream(serialPort.getOutputStream());
+        this.serialPort = SerialPort.getCommPort("/dev/cu.usbmodem14101");
+        this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
+        connectedToPort();
+        this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+        this.outputStream = serialPort.getOutputStream();
         start();
+    }
 
+    public static HardwareService getInstance() {
+
+        if (hardwareService == null) {
+
+            hardwareService = new HardwareService();
+
+        }
+
+        return hardwareService;
     }
 
     @Override
@@ -28,9 +41,16 @@ public class HardwareService extends Thread {
 
         try {
 
-            while (connectedToPort()) {
+            while (serialPort.isOpen()) {
 
-                arudinoResponse = inputStream.readUTF();
+                synchronized (this) {
+                    while (pause) {
+                        wait();
+                    }
+                }
+                arudinoResponse = inputStream.readLine();
+
+                System.out.println("Arduino response: " + arudinoResponse);
             }
 
         } catch (Exception e) {
@@ -41,6 +61,47 @@ public class HardwareService extends Thread {
 
     private boolean connectedToPort () {
 
-        return serialPort.openPort();
+        serialPort.openPort();
+
+        try {
+
+            Thread.sleep(5000);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return serialPort.isOpen();
+    }
+
+    public String send (JSONObject jsonObject) {
+
+        pauseStream();
+
+        try {
+
+            int i = jsonObject.getInt("command");
+            outputStream.write(i);
+
+            arudinoResponse = inputStream.readLine();
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        resumeStream();
+
+        return arudinoResponse;
+    }
+
+    private void pauseStream () {
+        pause = true;
+    }
+
+    private synchronized void resumeStream () {
+        pause = false;
+        notify();
     }
 }

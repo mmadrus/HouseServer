@@ -18,22 +18,11 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 public class Database {
     private MongoClient mongoClient = null;
     private DB databaseObj = null;
-    private static Database database = Database.getInstance();
+    private static Database database;
     private DBCollection dbCollection;
     private BasicDBObject document;
     private DBCursor cursor;
     private DBObject fetchedObject;
-
-
-    public static void main(String[] args) {
-
-        Object objectId = Database.getInstance().getDeviceId("1234");
-        String status = Database.getInstance().getDeviceStatus(objectId);
-        System.out.println(status);
-
-        Database.getInstance().findUser("1234-abcd-12dc");
-
-    }
 
     private Database() {
         mongoClient = new MongoClient("localhost", 27017);
@@ -116,6 +105,27 @@ public class Database {
     public void createUser(String jsonString){
 
 
+    }
+
+    public boolean commandLog (JSONObject jsonObject) {
+
+        try {
+
+            dbCollection = databaseObj.getCollection("DeviceLog");
+            document = new BasicDBObject();
+            document.put("dateTime", new Date().getTime());
+            document.put("user-id", jsonObject.getString("user-id"));
+            document.put("device-id", jsonObject.getString("device-id"));
+            document.put("command", jsonObject.getInt("command"));
+            dbCollection.insert(document);
+
+            return true;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

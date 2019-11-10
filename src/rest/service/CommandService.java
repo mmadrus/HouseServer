@@ -1,25 +1,25 @@
 package rest.service;
 
 import org.json.JSONObject;
+import rest.protocols.CommandProtocol;
+import rest.protocols.JSONProtocol;
 
 import javax.ws.rs.*;
 
 @Path("service/command")
 public class CommandService  {
 
-    @GET
-    public String ok () {
+    private JSONProtocol jsonProtocol = new JSONProtocol();
+    private CommandProtocol commandProtocol = new CommandProtocol();
 
-        return "HEJHEJHEJ";
-    }
     @PUT
-    public String userRequest (String json) {
+    public String userRequest (String jsonString) {
 
-        System.out.println(json);
-        JSONObject jsonObject = new JSONObject()
-                .put("hej", "hej");
+        JSONObject jsonObject = jsonProtocol.toJson(jsonString);
 
-        return jsonObject.toString();
+        jsonObject = commandProtocol.protocolCheck(jsonObject);
+
+        return jsonProtocol.fromJson(jsonObject);
     }
 
 

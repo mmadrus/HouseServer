@@ -1,9 +1,6 @@
 package rest.database;
 
-import java.util.Date;
-
 import com.mongodb.*;
-import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
 /*

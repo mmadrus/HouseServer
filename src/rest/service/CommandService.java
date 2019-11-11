@@ -5,6 +5,8 @@ import rest.protocols.CommandProtocol;
 import rest.protocols.JSONProtocol;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("service/command")
 public class CommandService  {
@@ -30,13 +32,15 @@ public class CommandService  {
     }
 
     @PUT
-    public String userRequest (String jsonString) {
+    public Response userRequest (String jsonString) {
 
-        JSONObject jsonObject = jsonProtocol.toJson(jsonString);
+       JSONObject jsonObject = jsonProtocol.toJson(jsonString);
 
-        jsonObject = commandProtocol.protocolCheck(jsonObject);
+        System.out.println(jsonObject.toString());
 
-        return jsonProtocol.fromJson(jsonObject);
+        JSONObject bajs = commandProtocol.protocolCheck(jsonObject);
+
+        return Response.ok(bajs.toString()).build();
     }
 
 

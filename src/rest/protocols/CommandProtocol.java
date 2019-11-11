@@ -13,8 +13,8 @@ public class CommandProtocol {
         JSONObject returnObject = new JSONObject();
 
         returnObject.put("token", jsonObject.getString("token"));
-        returnObject.put("request-type", jsonObject.getString("request-type"));
-        returnObject.put("device-id", jsonObject.getString("device-id"));
+        returnObject.put("requestType", jsonObject.getString("requestType"));
+        returnObject.put("deviceId", jsonObject.getInt("deviceId"));
 
         //if (Database.getInstance().commandLog(jsonObject)) {
 

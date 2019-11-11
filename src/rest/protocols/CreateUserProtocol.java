@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
+import rest.database.Database;
 
 public class CreateUserProtocol {
 
@@ -15,6 +16,9 @@ public class CreateUserProtocol {
         JSONObject newUser = new JSONObject(new JSONTokener(protocolString));
         String id = UUID.randomUUID().toString();
         newUser.put("ID", id);
+        Database db = new Database();
+
+        db.createUser(newUser);
 
         JSONObject serverReply = new JSONObject();
         serverReply.put("token", "server-generated token");
@@ -22,14 +26,14 @@ public class CreateUserProtocol {
         serverReply.put("result", "1");
         String reply = serverReply.toString();
 
-        try {
+        /*try {
             BufferedWriter out = new BufferedWriter(new FileWriter("newUser.json"));
             out.write(newUser.toString());
             out.flush();
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         return reply;
     }
 }

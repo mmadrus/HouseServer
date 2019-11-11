@@ -1,6 +1,6 @@
 package rest.service;
 
-import rest.protocols.LoginProtocol;
+//import rest.protocols.LoginProtocol;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 @Path("service/login")
 public class LoginService {
 
-    private LoginProtocol loginProtocol = new LoginProtocol();
+   // private LoginProtocol loginProtocol = new LoginProtocol();
     private String protocolType, responseString;
     private Response response;
 
@@ -31,7 +31,7 @@ public class LoginService {
 
         if (protocolString.equals("C")) {
 
-            responseString = loginProtocol.setProtocolString(protocolString);
+            //responseString = loginProtocol.setProtocolString(protocolString);
 
 
 

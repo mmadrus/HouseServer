@@ -35,7 +35,7 @@ public class Database {
 
     }
 
-    private Database() {
+    public Database() {
         mongoClient = new MongoClient("localhost", 27017);
         databaseObj = mongoClient.getDB("HouseDatabase");
 
@@ -84,6 +84,7 @@ public class Database {
 
 
     public void createUser(JSONObject json) {
+
         /*
         user Id
         user Email

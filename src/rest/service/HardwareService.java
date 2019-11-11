@@ -13,7 +13,8 @@ public class HardwareService extends Thread {
     private BufferedReader inputStream;
     private OutputStream outputStream;
     private String arudinoResponse;
-    private boolean pause = false;
+    private boolean pauseThread = false;
+    private String requestResponse = "";
 
     private HardwareService () {
 
@@ -43,14 +44,18 @@ public class HardwareService extends Thread {
 
             while (serialPort.isOpen()) {
 
-                synchronized (this) {
-                    while (pause) {
-                        wait();
-                    }
-                }
+
                 arudinoResponse = inputStream.readLine();
 
+                if (pauseThread) {
+                    requestResponse = arudinoResponse;
+                    System.out.println("Request response: " + arudinoResponse);
+                    pauseThread = false;
+
+                }
+
                 System.out.println("Arduino response: " + arudinoResponse);
+
             }
 
         } catch (Exception e) {
@@ -76,32 +81,29 @@ public class HardwareService extends Thread {
 
     public String send (JSONObject jsonObject) {
 
-        pauseStream();
-
         try {
 
+            requestResponse = "";
             int i = jsonObject.getInt("command");
             outputStream.write(i);
 
-            arudinoResponse = inputStream.readLine();
+            pauseThread = true;
 
+            while (requestResponse.equals("")) {
+                try {
+                    Thread.sleep(100);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
         } catch (Exception e) {
 
             e.printStackTrace();
         }
 
-        resumeStream();
-
-        return arudinoResponse;
+        return requestResponse;
     }
 
-    private void pauseStream () {
-        pause = true;
-    }
-
-    private synchronized void resumeStream () {
-        pause = false;
-        notify();
-    }
 }

@@ -1,5 +1,6 @@
 package rest.service;
 
+import rest.interfaces.IAuthService;
 import rest.protocols.LoginProtocol;
 
 import javax.ws.rs.GET;

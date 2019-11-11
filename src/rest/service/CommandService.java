@@ -26,7 +26,7 @@ public class CommandService  {
 
         System.out.println(jo.toString());
 
-        return jo.getString("result");
+        return "ok";
     }
 
     @PUT

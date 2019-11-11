@@ -1,6 +1,7 @@
 package rest;
 
-import rest.service.LoginService;
+import rest.service.CommandService;
+import rest.service.CreateUserService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -14,7 +15,8 @@ public class Main extends Application {
     public Set<Class<?>> getClasses () {
 
         HashSet h = new HashSet<Class<?>>();
-        h.add(LoginService.class);
+        h.add(CommandService.class);
+        h.add(CreateUserService.class);
         return h;
     }
 }

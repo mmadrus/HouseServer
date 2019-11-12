@@ -1,5 +1,7 @@
 package rest;
 
+import rest.resource.AuthenticationEndpoint;
+import rest.resource.ServerTestClass;
 import rest.service.CommandService;
 import rest.service.LoginService;
 
@@ -13,10 +15,11 @@ public class Main extends Application {
 
     @Override
     public Set<Class<?>> getClasses () {
-
         HashSet h = new HashSet<Class<?>>();
         h.add(LoginService.class);
         h.add(CommandService.class);
+        h.add(AuthenticationEndpoint.class);
+        h.add(ServerTestClass.class);
         return h;
     }
 }

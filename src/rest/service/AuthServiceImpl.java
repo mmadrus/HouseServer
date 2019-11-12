@@ -8,6 +8,7 @@ import rest.utils.AuthUtils;
 
 import javax.naming.AuthenticationException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +55,11 @@ public class AuthServiceImpl implements IAuthService {
 
 
         return userEntity;
+    }
+
+    @Override
+    public ArrayList<User> getUsers() {
+        database.findUsers();
     }
 
     @Override

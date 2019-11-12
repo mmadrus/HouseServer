@@ -1,9 +1,9 @@
 package rest;
 
 import rest.resource.AuthenticationEndpoint;
-import rest.resource.CommandResource;
-import rest.service.CreateUserService;
-import rest.service.HardwareService;
+import rest.resource.ServerTestClass;
+import rest.service.CommandService;
+import rest.service.LoginService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -16,11 +16,11 @@ public class Main extends Application {
     @Override
     public Set<Class<?>> getClasses () {
 
-        HardwareService.getInstance();
         HashSet h = new HashSet<Class<?>>();
-        h.add(CommandResource.class);
-        h.add(CreateUserService.class);
+        h.add(LoginService.class);
+        h.add(CommandService.class);
         h.add(AuthenticationEndpoint.class);
+        h.add(ServerTestClass.class);
         return h;
     }
 }

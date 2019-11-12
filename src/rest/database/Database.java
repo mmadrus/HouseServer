@@ -141,7 +141,7 @@ public class Database {
 
     //Find user
     public Object findUser(String id) {
-        dbCollection = databaseObj.getCollection("User");
+        dbCollection = databaseObj.getCollection("user");
 
         document = new BasicDBObject();
         document.put("userId", id);
@@ -155,8 +155,20 @@ public class Database {
 
 
         return fetchedObject;
+    }
 
+    public List<Object> getAllUsers() {
+        dbCollection = databaseObj.getCollection("user");
+        List<Object> allUsers = new ArrayList<>();
 
+        cursor = dbCollection.find();
+        while (cursor.hasNext()) {
+            document = new BasicDBObject();
+
+            allUsers.add(document);
+        }
+
+        return allUsers;
     }
 
 

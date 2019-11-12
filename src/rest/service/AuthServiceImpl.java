@@ -1,22 +1,25 @@
 package rest.service;
 
-import rest.interfaces.IAuthService;
+import rest.database.Database;
+import rest.models.User;
 import rest.models.UserProfileDto;
 import rest.models.UserProfileEntity;
 import rest.utils.AuthUtils;
 
 import javax.naming.AuthenticationException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AuthServiceImpl implements IAuthService {
 
     //should be db
-    String database;
+    Database database;
     AuthUtils authUtils;
 
-    public AuthServiceImpl(String database, AuthUtils authUtils) {
+    public AuthServiceImpl(Database database, AuthUtils authUtils) {
         this.database = database;
         this.authUtils = authUtils;
 
@@ -25,10 +28,10 @@ public class AuthServiceImpl implements IAuthService {
 
 
     @Override
-    public UserProfileDto authenticate(String username, String password) throws AuthenticationException {
+    public User authenticate(String username, String password) throws AuthenticationException {
         UserProfileDto userProfile = new UserProfileDto();
 
-        UserProfileEntity userEntity = getUserProfile(username);
+        User userEntity = (User) getUserProfile(username);
 
         String securePassword = "";
 
@@ -52,8 +55,11 @@ public class AuthServiceImpl implements IAuthService {
         }
 
 
-        return userProfile;
+        return userEntity;
     }
+
+    @Override
+    public List<Object> getUsers() { return database.getAllUsers(); }
 
     @Override
     public String resetSecurityDetails(String userName, String userPassword) {
@@ -61,12 +67,12 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
-    private UserProfileEntity getUserProfile(String userName) {
-        UserProfileEntity returnValue = null;
+    private Object getUserProfile(String userName) {
+        Object returnValue = null;
         try {
             //connect to database and get userprofile
-            // this.database.openConnection();
-            // returnValue = this.database.getUserProfile(userName);
+             database = Database.getInstance();
+             returnValue = this.database.findUser(userName);
         } finally {
             // this.database.closeConnection();
         }

@@ -1,16 +1,30 @@
 package rest.models;
 
-public class User {
-    String firstName;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
+
+@Entity(name = "Profile")
+public class User implements Serializable {
+    private static final long serialVersionUID = 7290798953394355234L;
+
+    @Id
+    @GeneratedValue
+    private String firstName;
+    private String lastName;
+    private String fullName;
+    private String password;
+    private String userName;
+    private String userId;
+    private String email;
+    private String salt;
+    private String token;
+    private String userPassword;
+
 
     public User() {
     }
-
-    String lastName;
-    String password;
-    String userName;
-    String userId;
-    String email;
 
     public User(String firstName, String lastName, String password, String userName, String userId, String email) {
         this.firstName = firstName;
@@ -21,8 +35,35 @@ public class User {
         this.email = email;
     }
 
+    public String getFullName() {
+        if (fullName == null) {
+            fullName = getFirstName() + " " + getLastName();
+        }
+        return fullName;
+    }
+
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setFirstName(String firstName) {
@@ -67,5 +108,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 }

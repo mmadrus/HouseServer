@@ -1,22 +1,42 @@
 package rest.service;
 
 import org.json.JSONObject;
+import rest.protocols.CommandProtocol;
+import rest.protocols.JSONProtocol;
 
 import javax.ws.rs.*;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 @Path("service/command")
 public class CommandService  {
 
+    private JSONProtocol jsonProtocol = new JSONProtocol();
+    private CommandProtocol commandProtocol = new CommandProtocol();
+
+    @GET
+    public String test () {
+
+        JSONObject jo = new JSONObject()
+                .put("token", "1234")
+                .put("request-type", "command")
+                .put("user-id", "1234")
+                .put("device-id", "1234")
+                .put("command", 2);
+
+        jo = commandProtocol.protocolCheck(jo);
+
+        System.out.println(jo.toString());
+
+        return "ok";
+    }
+
     @PUT
-    public String userRequest (String json) {
+    public String userRequest (String jsonString) {
 
-        System.out.println(json);
-        JSONObject jsonObject = new JSONObject()
-                .put("hej", "hej");
+        JSONObject jsonObject = jsonProtocol.toJson(jsonString);
 
-        return jsonObject.toString();
+        jsonObject = commandProtocol.protocolCheck(jsonObject);
+
+        return jsonProtocol.fromJson(jsonObject);
     }
 
 

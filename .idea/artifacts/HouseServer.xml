@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="HouseServer">
+    <output-path>$PROJECT_DIR$/out/artifacts/HouseServer</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="HouseServer1" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="com.fazecast:jSerialComm:[2.0.0,3.0.0)" />
+          <element id="library" level="project" name="lib2" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="HouseServer1/web/Web" />
+    </root>
+  </artifact>
+</component>

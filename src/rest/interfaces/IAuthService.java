@@ -1,4 +1,4 @@
-package rest.service;
+package rest.interfaces;
 
 import rest.models.User;
 import rest.models.UserProfileDto;

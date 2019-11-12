@@ -12,7 +12,6 @@ public class HardwareService extends Thread {
     private SerialPort serialPort;
     private BufferedReader inputStream;
     private OutputStream outputStream;
-    private String arudinoResponse;
     private boolean pauseThread = false;
     private String requestResponse = "";
 
@@ -20,10 +19,11 @@ public class HardwareService extends Thread {
 
         this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001KMk");
         this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-        connectedToPort();
-        //this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-        this.outputStream = serialPort.getOutputStream();
-        //start();
+        if (connectedToPort()) {
+            this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+            this.outputStream = serialPort.getOutputStream();
+            start();
+        }
     }
 
     public static HardwareService getInstance() {
@@ -42,19 +42,19 @@ public class HardwareService extends Thread {
 
         try {
 
+            String arduinoResponse;
             while (serialPort.isOpen()) {
 
 
-                /*arudinoResponse = inputStream.readLine();
+                arduinoResponse = inputStream.readLine();
 
                 if (pauseThread) {
-                    requestResponse = arudinoResponse;
-                    System.out.println("Request response: " + arudinoResponse);
+                    requestResponse = arduinoResponse;
                     pauseThread = false;
 
                 }
 
-                System.out.println("Arduino response: " + arudinoResponse);*/
+                System.out.println("Arduino response: " + arduinoResponse);
 
             }
 
@@ -83,21 +83,20 @@ public class HardwareService extends Thread {
 
         try {
 
-            requestResponse = "";
             int i = jsonObject.getInt("command");
             System.out.println("COMMAND: " + i);
             outputStream.write(i);
 
-            /* = true;
+            pauseThread = true;
 
-            while (requestResponse.equals("")) {
+            while (pauseThread) {
                 try {
                     Thread.sleep(100);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }*/
+            }
 
         } catch (Exception e) {
 

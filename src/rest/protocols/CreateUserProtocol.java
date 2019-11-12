@@ -18,7 +18,7 @@ public class CreateUserProtocol {
 
         JSONObject serverReply = new JSONObject();
         serverReply.put("token", "server-generated token");
-        serverReply.put("request-type", "create-user");
+        serverReply.put("requestType", "createUser");
         serverReply.put("result", "1");
         String reply = serverReply.toString();
 

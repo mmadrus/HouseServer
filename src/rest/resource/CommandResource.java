@@ -1,4 +1,4 @@
-package rest.service;
+package rest.resource;
 
 import org.json.JSONObject;
 import rest.protocols.CommandProtocol;
@@ -9,9 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("service/command")
-public class CommandService  {
+public class CommandResource {
 
-    private JSONProtocol jsonProtocol = new JSONProtocol();
     private CommandProtocol commandProtocol = new CommandProtocol();
 
     @GET
@@ -24,17 +23,17 @@ public class CommandService  {
                 .put("device-id", "1234")
                 .put("command", 2);
 
-        jo = commandProtocol.protocolCheck(jo);
+        //jo = commandProtocol.protocolCheck(jo);
 
         System.out.println(jo.toString());
 
-        return "ok";
+        return "Edmir är en bitch";
     }
 
-    @PUT
+    @POST
     public Response userRequest (String jsonString) {
 
-       JSONObject jsonObject = jsonProtocol.toJson(jsonString);
+       JSONObject jsonObject = JSONProtocol.getInstance().toJson(jsonString);
 
         System.out.println(jsonObject.toString());
 

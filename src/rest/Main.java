@@ -1,6 +1,7 @@
 package rest;
 
-import rest.service.CommandService;
+import rest.resource.AuthenticationEndpoint;
+import rest.resource.CommandResource;
 import rest.service.CreateUserService;
 import rest.service.HardwareService;
 
@@ -15,9 +16,11 @@ public class Main extends Application {
     @Override
     public Set<Class<?>> getClasses () {
 
+        HardwareService.getInstance();
         HashSet h = new HashSet<Class<?>>();
-        h.add(CommandService.class);
+        h.add(CommandResource.class);
         h.add(CreateUserService.class);
+        h.add(AuthenticationEndpoint.class);
         return h;
     }
 }

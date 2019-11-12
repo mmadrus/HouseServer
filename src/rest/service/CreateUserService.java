@@ -15,14 +15,9 @@ public class CreateUserService  {
 
         return "createUser";
     }
-    @PUT
+    @POST
     public String newUser(String json) {
 
-        /*System.out.println(json);
-        JSONObject jsonObject = new JSONObject()
-                .put("hej", "hej");
-
-        return jsonObject.toString();*/
 
         CreateUserProtocol newUser1 = new CreateUserProtocol();
         JSONObject obj = new JSONObject();

@@ -13,12 +13,11 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/users")
-@Produces(MediaType.APPLICATION_JSON)
+@Path("users")
 public class ServerTestClass {
 
     AuthServiceImpl authService;
-    Database database = Database.getInstance();
+    //Database database = Database.getInstance();
 
 
     @GET
@@ -28,6 +27,7 @@ public class ServerTestClass {
         return "Hello world";
 
     }
+
     @GET
     public Response getUsers() {
         Object result = authService.getUsers();

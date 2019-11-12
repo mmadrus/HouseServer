@@ -1,6 +1,7 @@
 package rest.service;
 
 import rest.database.Database;
+import rest.interfaces.IAuthService;
 import rest.models.User;
 import rest.models.UserProfileDto;
 import rest.models.UserProfileEntity;

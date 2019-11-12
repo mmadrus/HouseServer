@@ -1,0 +1,56 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="GlassFish 5.0.0 Remote AWS" type="GlassfishConfiguration" factoryName="Remote" APPLICATION_SERVER_NAME="GlassFish 5.0.0" ALTERNATIVE_JRE_ENABLED="false">
+    <option name="HOST" value="ec2-13-48-149-247.eu-north-1.compute.amazonaws.com" />
+    <option name="LOCAL" value="false" />
+    <option name="UPDATING_POLICY" value="hot-swap-classes" />
+    <deployment>
+      <artifact name="houseserver:war exploded">
+        <settings />
+      </artifact>
+    </deployment>
+    <server-settings>
+      <data>
+        <option name="adminServerHost" value="" />
+        <option name="clusterName" value="" />
+        <option name="credentialAlias" value="9bbb07a7-ac36-48b3-a981-ce54be604f91" />
+        <option name="secured" value="true" />
+        <option name="stagingRemotePath" value="/home/ubuntu" />
+        <option name="transportHostId" value="acf03888-d6a2-411a-b674-f3bbcb9331e7" />
+        <option name="transportStagingTarget">
+          <TransportTarget>
+            <option name="id" value="2ab5433c-7048-4454-950f-512375fa084f" />
+            <id>2ab5433c-7048-4454-950f-512375fa084f</id>
+          </TransportTarget>
+        </option>
+        <option name="uploadWithGlassfish" value="false" />
+        <credential-alias>9bbb07a7-ac36-48b3-a981-ce54be604f91</credential-alias>
+        <upload-with-glassfish>false</upload-with-glassfish>
+        <secured>true</secured>
+        <admin-server-host />
+        <cluster-name />
+        <transport-target>
+          <TransportTarget>
+            <option name="id" value="2ab5433c-7048-4454-950f-512375fa084f" />
+            <id>2ab5433c-7048-4454-950f-512375fa084f</id>
+          </TransportTarget>
+        </transport-target>
+        <staging-path>/home/ubuntu</staging-path>
+        <host-id>acf03888-d6a2-411a-b674-f3bbcb9331e7</host-id>
+      </data>
+    </server-settings>
+    <predefined_log_file enabled="true" id="GlassFish" />
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="55812" />
+      <option name="LOCAL" value="false" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Debug with VisualVM">
+      <option name="DEBUG_PORT" value="61272" />
+      <option name="visualVMId" value="277937381338554" />
+      <option name="LOCAL" value="false" />
+    </RunnerSettings>
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true" />
+    </method>
+  </configuration>
+</component>

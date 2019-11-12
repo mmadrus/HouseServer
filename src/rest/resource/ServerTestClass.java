@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/users")
+@Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 public class ServerTestClass {
 
@@ -22,7 +22,7 @@ public class ServerTestClass {
 
 
     @GET
-    @Path("/test")
+    @Path("test")
     public String getString() {
 
         return "Hello world";

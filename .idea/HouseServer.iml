@@ -9,7 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/web" relative="/" />
         </webroots>
-        <sourceRoots />
       </configuration>
     </facet>
   </component>
@@ -24,5 +23,6 @@
     <orderEntry type="library" name="javax.persistence:javax.persistence-api:2.2" level="project" />
     <orderEntry type="library" name="org.mongodb:mongo-java-driver:3.11.1" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="com.guicedee.services:javax.servlet-api:0.70.0.3" level="project" />
   </component>
 </module>

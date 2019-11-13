@@ -14,20 +14,18 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("users")
-@Produces(MediaType.APPLICATION_JSON)
 public class ServerTestClass {
 
     AuthServiceImpl authService;
-    Database database = Database.getInstance();
 
-
-    @GET
     @Path("test")
+    @GET
     public String getString() {
 
-        return "Hello world";
+        return "penis";
 
     }
+
     @GET
     public Response getUsers() {
         Object result = authService.getUsers();

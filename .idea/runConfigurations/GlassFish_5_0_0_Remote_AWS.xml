@@ -2,9 +2,10 @@
   <configuration default="false" name="GlassFish 5.0.0 Remote AWS" type="GlassfishConfiguration" factoryName="Remote" APPLICATION_SERVER_NAME="GlassFish 5.0.0" ALTERNATIVE_JRE_ENABLED="false">
     <option name="HOST" value="ec2-13-48-149-247.eu-north-1.compute.amazonaws.com" />
     <option name="LOCAL" value="false" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://ec2-13-48-149-247.eu-north-1.compute.amazonaws.com:8080/HouseServer_war_exploded/" />
     <option name="UPDATING_POLICY" value="hot-swap-classes" />
     <deployment>
-      <artifact name="houseserver:war exploded">
+      <artifact name="HouseServer:war exploded">
         <settings />
       </artifact>
     </deployment>
@@ -14,7 +15,7 @@
         <option name="clusterName" value="" />
         <option name="credentialAlias" value="9bbb07a7-ac36-48b3-a981-ce54be604f91" />
         <option name="secured" value="true" />
-        <option name="stagingRemotePath" value="/home/ubuntu" />
+        <option name="stagingRemotePath" value="/home/ubuntu/staging" />
         <option name="transportHostId" value="acf03888-d6a2-411a-b674-f3bbcb9331e7" />
         <option name="transportStagingTarget">
           <TransportTarget>
@@ -34,7 +35,7 @@
             <id>2ab5433c-7048-4454-950f-512375fa084f</id>
           </TransportTarget>
         </transport-target>
-        <staging-path>/home/ubuntu</staging-path>
+        <staging-path>/home/ubuntu/staging</staging-path>
         <host-id>acf03888-d6a2-411a-b674-f3bbcb9331e7</host-id>
       </data>
     </server-settings>
@@ -50,7 +51,9 @@
     </RunnerSettings>
     <method v="2">
       <option name="Make" enabled="true" />
-      <option name="BuildArtifacts" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="HouseServer:war exploded" />
+      </option>
     </method>
   </configuration>
 </component>

@@ -8,6 +8,7 @@ import rest.models.UserProfileEntity;
 import rest.utils.AuthUtils;
 
 import javax.naming.AuthenticationException;
+import javax.xml.crypto.Data;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +17,12 @@ import java.util.logging.Logger;
 
 public class AuthServiceImpl implements IAuthService {
 
-    //should be db
     Database database;
     AuthUtils authUtils;
 
     public AuthServiceImpl(Database database, AuthUtils authUtils) {
-        this.database = database;
+        this.database = Database.getInstance();
         this.authUtils = authUtils;
-
-
     }
 
 
@@ -71,8 +69,6 @@ public class AuthServiceImpl implements IAuthService {
     private Object getUserProfile(String userName) {
         Object returnValue = null;
         try {
-            //connect to database and get userprofile
-             database = Database.getInstance();
              returnValue = this.database.findUser(userName);
         } finally {
             // this.database.closeConnection();

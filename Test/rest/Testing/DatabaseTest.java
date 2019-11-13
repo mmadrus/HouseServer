@@ -48,22 +48,31 @@ public class DatabaseTest {
 
 
     }
+
     @Test
-    public void loginMethodFail() throws Exception {
+    public void loginMethodFailWithEmptyInput() throws Exception {
 
         JSONObject testObject = new JSONObject();
         testObject.put("userName", "");
         testObject.put("password", "");
         String jsonString = testObject.toString();
-
-
         String actual = Database.getInstance().loginMethod(jsonString);
 
         Assert.assertEquals("0", actual);
 
-
     }
 
+    @Test
+    public void loginMethodFailWithWrongPassword() throws Exception {
+
+        JSONObject testObject = new JSONObject();
+        testObject.put("userName", "IsakZ");
+        testObject.put("password", "wrongpassword");
+        String jsonString = testObject.toString();
+        String actual = Database.getInstance().loginMethod(jsonString);
+        Assert.assertEquals("0", actual);
+
+    }
 
     @Test
     public void getDeviceStatus() throws Exception {
@@ -74,15 +83,15 @@ public class DatabaseTest {
     }
 
     @Test
-    public void createUserFail() throws Exception {
+    public void createUserWithAlreadyExistingUsername() throws Exception {
         JSONObject testJson = new JSONObject();
         testJson.put("firstName", "Filip");
         testJson.put("lastName", "BenkanssonjAO");
         testJson.put("password", "123456");
-        testJson.put("userName", "Benka33");
+        testJson.put("userName", "Benka33"); //This will fail since username alredy in use.
         testJson.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
-        testJson.put("email", "sm@somethimore.com");
-        String jsonString = testJson.toString();  //"den som kommer från server"
+        testJson.put("email", "sm@somethimore.com");  //This will fail since email already in use
+        String jsonString = testJson.toString();
 
 
         String actual = Database.getInstance().createUser(jsonString);
@@ -108,5 +117,39 @@ public class DatabaseTest {
         Assert.assertEquals("1", actual);
 
     }
+    @Test
+    public void createUserWithoutEmail() throws Exception {
+        JSONObject testJson = new JSONObject();
+        testJson.put("firstName", "Filip");
+        testJson.put("lastName", "BenkanssonjAO");
+        testJson.put("password", "123456");
+        testJson.put("userName", "Benka33"); //Change email and username for it to succeed
+        testJson.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
+        testJson.put("email", ""); //Change email and username for it to succeed
+        String jsonString = testJson.toString();  //"den som kommer från server"
+
+
+        String actual = Database.getInstance().createUser(jsonString);
+
+        Assert.assertEquals("0", actual);
+
+    }
+    @Test
+    public void createUserWithoutUsername() throws Exception {
+        JSONObject testJson = new JSONObject();
+        testJson.put("firstName", "Filip");
+        testJson.put("lastName", "BenkanssonjAO");
+        testJson.put("password", "123456");
+        testJson.put("userName", "");
+        testJson.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
+        testJson.put("email", "sm@somete.com");
+        String jsonString = testJson.toString();
+
+        String actual = Database.getInstance().createUser(jsonString);
+
+        Assert.assertEquals("0", actual);
+
+    }
+
 
 }

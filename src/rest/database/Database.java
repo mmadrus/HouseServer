@@ -49,13 +49,20 @@ public class Database {
         database.changeStatusOfDevice(mongoObjectId);
                 System.out.println(database.loginMethod("hej"));
 
-*/
+
         Object object = Database.getInstance().getDeviceId("1337");
         System.out.println(object.toString());
         String status = Database.getInstance().getDeviceStatus(object);
         String changedState = Database.getInstance().changeStatusOfDevice(object);
         System.out.println(changedState);
+        */
+
+        // Database.getInstance().changeStatusOfDevice("1337");
+
+        System.out.println(Database.getInstance().createUser("hej"));
+
     }
+
 
 
 
@@ -82,14 +89,14 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
     }
 
-    public String changeStatusOfDevice(Object objectId) {
+    public String changeStatusOfDevice(String objectId) {
         dbCollection = databaseObj.getCollection("Device");
         //   document = new BasicDBObject();
         // document.put("_id", objectId.toString());
         query = new BasicDBObject();
         query.append("$set", new BasicDBObject().append("state", "1"));
         document = new BasicDBObject();
-        document.append("_id", "ObjectId(" + objectId.toString() + ")");
+        document.append("_id", objectId);
         dbCollection.update(document, query);
 
 
@@ -118,13 +125,13 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
      */
     public String createUser(String jsonString) {
         try {
-         /*   JSONObject filipTest = new JSONObject();
+        /*    JSONObject filipTest = new JSONObject();
             filipTest.put("firstName", "Filip");
             filipTest.put("lastName", "BenkanssonjAO");
             filipTest.put("password", "123456");
             filipTest.put("userName", "Benka33");
             filipTest.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
-            filipTest.put("email", "sm@somethingmore.com");
+            filipTest.put("email", "");
             jsonString = filipTest.toString();  //"den som kommer från server"
 */
             dbCollection = databaseObj.getCollection("User");
@@ -136,9 +143,13 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
             document = new BasicDBObject();
             document.put("email", userEmail);
             cursor = dbCollection.find(document);
+            if (userEmail.equalsIgnoreCase("") || userName.equalsIgnoreCase("")) {
+                return "0"; //no username or email entered
+            }
 
             while (cursor.hasNext()) {
                 fetchedObject = cursor.next();
+
                 if (fetchedObject.toString().contains(userEmail)) {
 
                     return "0"; //Email already in use
@@ -146,6 +157,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
                     return "0"; //User name already in use
                 }
+
 
             }
 
@@ -157,7 +169,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
             query.put("userId", user.getUserId());
             query.put("email", user.getEmail());
 
-            //   dbCollection.insert(query);
+            dbCollection.insert(query);
 
         } catch (JSONException ex) {
             ex.printStackTrace();
@@ -240,6 +252,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
 
     }
+
     private Database() {
         mongoClient = new MongoClient("localhost", 27017);
         databaseObj = mongoClient.getDB("HouseDatabase");

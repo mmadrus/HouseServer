@@ -58,11 +58,6 @@ public class Database {
     }
 
 
-    private Database() {
-        mongoClient = new MongoClient("localhost", 27017);
-        databaseObj = mongoClient.getDB("HouseDatabase");
-
-    }
 
 /*
 To get the object id(mongoDB's object ID, looks like: "5dc199596d60d45f6409d791"),
@@ -94,8 +89,8 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
         query = new BasicDBObject();
         query.append("$set", new BasicDBObject().append("state", "1"));
         document = new BasicDBObject();
-        document.append("id", "1337");
-        dbCollection.update(document,query);
+        document.append("_id", "ObjectId(" + objectId.toString() + ")");
+        dbCollection.update(document, query);
 
 
         return "";
@@ -243,6 +238,11 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
         }
         return database;
 
+
+    }
+    private Database() {
+        mongoClient = new MongoClient("localhost", 27017);
+        databaseObj = mongoClient.getDB("HouseDatabase");
 
     }
 

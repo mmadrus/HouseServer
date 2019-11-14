@@ -20,9 +20,9 @@ public class AuthServiceImpl implements IAuthService {
     Database database;
     AuthUtils authUtils;
 
-    public AuthServiceImpl(Database database, AuthUtils authUtils) {
+    public AuthServiceImpl() {
         this.database = Database.getInstance();
-        this.authUtils = authUtils;
+        this.authUtils = new AuthUtils();
     }
 
 

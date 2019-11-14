@@ -1,18 +1,18 @@
 package rest.database;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.mongodb.DB;
 import com.mongodb.*;
-import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import rest.models.User;
+import rest.service.AuthServiceImpl;
+
+import javax.naming.AuthenticationException;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -32,32 +32,33 @@ public class Database {
     private BasicDBObject document, query;
     private DBCursor cursor;
     private DBObject fetchedObject;
+    private MongoCredential mongoCredential = null;
 
+    private final String URL = "localhost";
+    private final String AUTH_USER = "server_db";
+    private final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
+    private final String PASSWORD = "serverisking";
+    private final String PORT_NUMBER = "27017";
+    private final String DATABASE = "smart_house";
 
-    public static void main(String[] args) {
-/*
-        Object object = Database.getInstance().getDeviceId("1234");
-        String status = Database.getInstance().getDeviceStatus(object);
-        System.out.println(status);
-
-        Object mongoObjectId = database.getDeviceId("1234");
-        Database.getInstance().findUser("1234-abcd-12dc");
-        Database.getInstance().changeStatusOfDevice(object);
-        System.out.println("MongoObjectId " + mongoObjectId.toString());
-        database.changeStatusOfDevice(mongoObjectId);
-*/
-        System.out.println(database.createUser("hej"));
-    }
 
     public void changeStatusOfDevice(Object objectId) {
-
-
     }
 
     private Database() {
-        mongoClient = new MongoClient("localhost", 27017);
-        databaseObj = mongoClient.getDB("HouseDatabase");
+        try {
+            mongoCredential = MongoCredential.createCredential(AUTH_USER, DATABASE, PASSWORD_AS_ARR);
+            MongoClientOptions options = MongoClientOptions.builder()
+                    .writeConcern(WriteConcern.JOURNALED).build();
+            // mongoClient = new MongoClient(new ServerAddress("localhost", 27017),
+            //        Arrays.asList(mongoCredential), options);
+            mongoClient = new MongoClient(new MongoClientURI("mongodb://" + AUTH_USER + ":" + PASSWORD + "@" + "localhost" + "/" + DATABASE));
 
+            //mongoClient = new MongoClient("localhost", 27017);
+            databaseObj = mongoClient.getDB("smart_house");
+        }catch (Exception ix) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ix);
+        }
     }
 
 
@@ -182,7 +183,7 @@ public class Database {
 
     }
 
-    public boolean commandLog (JSONObject jsonObject) {
+    public boolean commandLog(JSONObject jsonObject) {
 
         try {
 

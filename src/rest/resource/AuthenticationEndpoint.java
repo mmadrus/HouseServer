@@ -23,7 +23,7 @@ public class AuthenticationEndpoint {
                                      @FormParam("password") String password) {
         database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
-        authService = new AuthServiceImpl(database, authUtils);
+        authService = new AuthServiceImpl();
 
 
         try {

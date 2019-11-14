@@ -14,6 +14,7 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("users")
+@Produces(MediaType.APPLICATION_JSON)
 public class ServerTestClass {
 
     AuthServiceImpl authService;
@@ -28,6 +29,7 @@ public class ServerTestClass {
 
     @GET
     public Response getUsers() {
+        authService = new AuthServiceImpl();
         Object result = authService.getUsers();
         if (result != null) {
             GenericEntity<Object> genericEntity = new GenericEntity<Object>(result) {

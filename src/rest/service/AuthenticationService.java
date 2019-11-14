@@ -1,19 +1,18 @@
-package rest.resource;
+package rest.service;
 
 import rest.database.Database;
 import rest.models.Token;
-import rest.service.AuthServiceImpl;
+import rest.resource.AuthenticationHandler;
 import rest.utils.AuthUtils;
 
-import javax.naming.AuthenticationException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/authentication")
-public class AuthenticationEndpoint {
+public class AuthenticationService {
 
-    AuthServiceImpl authService;
+    AuthenticationHandler authService;
     Database database;
 
     @POST
@@ -23,7 +22,7 @@ public class AuthenticationEndpoint {
                                      @FormParam("password") String password) {
         database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
-        authService = new AuthServiceImpl();
+        authService = new AuthenticationHandler();
 
 
         try {

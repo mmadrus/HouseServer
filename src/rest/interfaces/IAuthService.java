@@ -9,10 +9,11 @@ import java.util.List;
 
 public interface IAuthService {
 
-    //TODO Shall return object of user
     public User authenticate(String userName, String userPassword) throws AuthenticationException;
 
     public List<Object> getUsers();
+
+    public Object getUserWithName();
 
     public String resetSecurityDetails(String userName, String userPassword);
 

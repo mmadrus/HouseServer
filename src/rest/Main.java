@@ -1,6 +1,6 @@
 package rest;
 
-import rest.resource.AuthenticationEndpoint;
+import rest.service.AuthenticationService;
 import rest.resource.ServerTestClass;
 import rest.service.CommandService;
 import rest.service.LoginService;
@@ -18,7 +18,7 @@ public class Main extends Application {
         HashSet h = new HashSet<Class<?>>();
         h.add(LoginService.class);
         h.add(CommandService.class);
-        h.add(AuthenticationEndpoint.class);
+        h.add(AuthenticationService.class);
         h.add(ServerTestClass.class);
         return h;
     }

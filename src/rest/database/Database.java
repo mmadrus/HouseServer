@@ -8,11 +8,7 @@ import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.*;
 import org.json.JSONException;
-import org.json.JSONObject;
 import rest.models.User;
-import rest.service.AuthServiceImpl;
-
-import javax.naming.AuthenticationException;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -21,44 +17,34 @@ Use the correct port for your server.
 To get the object id(mongoDB's object ID, looks like: "5dc199596d60d45f6409d791"), use the method "getObjectId", which returns the object ID.
 The method uses "our" object id notation (e.g. 1234, as protocol states)
 
+
 */
 
 public class Database {
+
+    private static final String URL = "ec2-13-48-149-247.eu-north-1.compute.amazonaws.com";
+    private static final String AUTH_USER = "server_db";
+    private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
+    private static final String PASSWORD = "serverisking";
+    private static final String PORT_NUMBER = "27017";
+    private static final String DATABASE = "smart_house";
+
+
     private Gson gson;
     private MongoClient mongoClient = null;
-    private DB databaseObj = null;
     private static Database database = Database.getInstance();
     private DBCollection dbCollection;
     private BasicDBObject document, query;
     private DBCursor cursor;
     private DBObject fetchedObject;
     private MongoCredential mongoCredential = null;
+    private DB databaseObj;
 
-    private final String URL = "localhost";
-    private final String AUTH_USER = "server_db";
-    private final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
-    private final String PASSWORD = "serverisking";
-    private final String PORT_NUMBER = "27017";
-    private final String DATABASE = "smart_house";
-
-
-    public void changeStatusOfDevice(Object objectId) {
-    }
 
     private Database() {
-        try {
-            mongoCredential = MongoCredential.createCredential(AUTH_USER, DATABASE, PASSWORD_AS_ARR);
-            MongoClientOptions options = MongoClientOptions.builder()
-                    .writeConcern(WriteConcern.JOURNALED).build();
-            // mongoClient = new MongoClient(new ServerAddress("localhost", 27017),
-            //        Arrays.asList(mongoCredential), options);
-            mongoClient = new MongoClient(new MongoClientURI("mongodb://" + AUTH_USER + ":" + PASSWORD + "@" + "localhost" + "/" + DATABASE));
-
-            //mongoClient = new MongoClient("localhost", 27017);
-            databaseObj = mongoClient.getDB("smart_house");
-        }catch (Exception ix) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ix);
-        }
+        MongoClientURI uri = new MongoClientURI("mongodb://" + AUTH_USER + ":" + PASSWORD + "@" + URL + ":" + PORT_NUMBER + "/" + DATABASE);
+        mongoClient = new MongoClient(uri);
+        databaseObj = mongoClient.getDB("smart_house");
     }
 
 
@@ -90,7 +76,6 @@ public class Database {
 
 
     //Create user
-
 
     public String createUser(String jsonString) {
         try {
@@ -156,22 +141,23 @@ public class Database {
 
 
         return fetchedObject;
+
+
     }
 
     public List<Object> getAllUsers() {
-        dbCollection = databaseObj.getCollection("user");
         List<Object> allUsers = new ArrayList<>();
+        dbCollection = databaseObj.getCollection("user");
 
         cursor = dbCollection.find();
         while (cursor.hasNext()) {
-            document = new BasicDBObject();
-
-            allUsers.add(document);
+            fetchedObject = cursor.next();
+            allUsers.add(fetchedObject);
         }
+
 
         return allUsers;
     }
-
 
     public static Database getInstance() {
         if (database == null) {
@@ -183,7 +169,7 @@ public class Database {
 
     }
 
-    public boolean commandLog(JSONObject jsonObject) {
+  /*  public boolean commandLog(JSONObject jsonObject) {
 
         try {
 
@@ -202,7 +188,7 @@ public class Database {
             e.printStackTrace();
             return false;
         }
-    }
+    }*/
 
 
 }

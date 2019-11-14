@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import rest.models.User;
+import rest.models.UserProfileEntity;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -136,7 +137,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 */
             dbCollection = databaseObj.getCollection("User");
             gson = new Gson();
-            User user = gson.fromJson(jsonString, User.class);
+            UserProfileEntity user = gson.fromJson(jsonString, UserProfileEntity.class);
             String userEmail = user.getEmail();
             String userName = user.getUserName();
 
@@ -164,7 +165,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
             query = new BasicDBObject();
             query.put("firstName", user.getFirstName());
             query.put("lastName", user.getLastName());
-            query.put("password", user.getPassword());
+            query.put("password", user.getUserPassword());
             query.put("userName", user.getUserName());
             query.put("userId", user.getUserId());
             query.put("email", user.getEmail());

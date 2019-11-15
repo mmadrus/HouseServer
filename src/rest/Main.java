@@ -3,6 +3,7 @@ package rest;
 import rest.resource.AuthenticationEndpoint;
 import rest.resource.CommandResource;
 import rest.resource.ServerTestClass;
+import rest.service.HardwareService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

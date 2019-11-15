@@ -34,7 +34,7 @@ public class Database {
     private DBObject fetchedObject;
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 /*
         Object object = Database.getInstance().getDeviceId("1234");
         String status = Database.getInstance().getDeviceStatus(object);
@@ -45,9 +45,9 @@ public class Database {
         Database.getInstance().changeStatusOfDevice(object);
         System.out.println("MongoObjectId " + mongoObjectId.toString());
         database.changeStatusOfDevice(mongoObjectId);
-*/
+
         System.out.println(database.createUser("hej"));
-    }
+    }*/
 
     public void changeStatusOfDevice(Object objectId) {
 
@@ -182,26 +182,7 @@ public class Database {
 
     }
 
-    public boolean commandLog (JSONObject jsonObject) {
 
-        try {
-
-            dbCollection = databaseObj.getCollection("DeviceLog");
-            document = new BasicDBObject();
-            document.put("dateTime", new Date().getTime());
-            document.put("user-id", jsonObject.getString("user-id"));
-            document.put("device-id", jsonObject.getString("device-id"));
-            document.put("command", jsonObject.getInt("command"));
-            dbCollection.insert(document);
-
-            return true;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return false;
-        }
-    }
 
 
 }

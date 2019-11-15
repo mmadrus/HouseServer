@@ -1,6 +1,7 @@
 package rest.service;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.ardulink.util.ByteArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -17,7 +18,8 @@ public class HardwareService extends Thread {
 
     private HardwareService () {
 
-        this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001KMk");
+        //this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001sHl");
+        this.serialPort = SerialPort.getCommPort("/dev/cu.usbmodem14101");
         this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
         if (connectedToPort()) {
             this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
@@ -70,7 +72,7 @@ public class HardwareService extends Thread {
 
         try {
 
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -85,9 +87,11 @@ public class HardwareService extends Thread {
 
             int i = jsonObject.getInt("command");
             System.out.println("COMMAND: " + i);
+
             outputStream.write(i);
 
-            pauseThread = true;
+
+            /*pauseThread = true;
 
             while (pauseThread) {
                 try {
@@ -96,12 +100,13 @@ public class HardwareService extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
 
         } catch (Exception e) {
 
             e.printStackTrace();
         }
+
 
         return requestResponse;
     }

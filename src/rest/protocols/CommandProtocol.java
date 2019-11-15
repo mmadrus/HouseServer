@@ -16,7 +16,7 @@ public class CommandProtocol {
         returnObject.put("requestType", jsonObject.getString("requestType"));
         returnObject.put("deviceId", jsonObject.getInt("deviceId"));
 
-        //if (Database.getInstance().commandLog(jsonObject)) {
+        if (Database.getInstance().commandLog(jsonObject)) {
 
             if (tokenProtocol.isAlive(jsonObject.getString("token"))) {
 
@@ -25,7 +25,7 @@ public class CommandProtocol {
                     return returnObject;
             }
 
-        //}
+        }
 
         returnObject.put("result", 0);
 

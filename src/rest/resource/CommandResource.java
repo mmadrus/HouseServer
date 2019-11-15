@@ -18,12 +18,12 @@ public class CommandResource {
 
         JSONObject jo = new JSONObject()
                 .put("token", "1234")
-                .put("request-type", "command")
-                .put("user-id", "1234")
-                .put("device-id", "1234")
-                .put("command", 2);
+                .put("requestType", "command")
+                .put("userId", "1234")
+                .put("deviceId", 1234)
+                .put("command", 1);
 
-        //jo = commandProtocol.protocolCheck(jo);
+        jo = commandProtocol.protocolCheck(jo);
 
         System.out.println(jo.toString());
 
@@ -39,7 +39,7 @@ public class CommandResource {
 
         JSONObject bajs = commandProtocol.protocolCheck(jsonObject);
 
-        return Response.ok(bajs.toString()).build();
+        return Response.ok(bajs.toString()).header("Access-Control-Allow-Origin", "*").build();
     }
 
 

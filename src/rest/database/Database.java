@@ -27,15 +27,15 @@ public class Database {
     private Gson gson;
     private MongoClient mongoClient = null;
     private DB databaseObj = null;
-    private static Database database = Database.getInstance();
+    private static Database database; //= Database.getInstance();
     private DBCollection dbCollection;
     private BasicDBObject document, query;
     private DBCursor cursor;
     private DBObject fetchedObject;
 
 
-    /*public static void main(String[] args) {
-/*
+    public static void main(String[] args) {
+
         Object object = Database.getInstance().getDeviceId("1234");
         String status = Database.getInstance().getDeviceStatus(object);
         System.out.println(status);
@@ -47,7 +47,7 @@ public class Database {
         database.changeStatusOfDevice(mongoObjectId);
 
         System.out.println(database.createUser("hej"));
-    }*/
+    }
 
     public void changeStatusOfDevice(Object objectId) {
 

@@ -1,19 +1,22 @@
-package rest.resource;
+package rest.service;
 
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
 import rest.database.Database;
 import rest.models.Token;
-import rest.service.AuthServiceImpl;
+import rest.resource.AuthenticationHandler;
 import rest.utils.AuthUtils;
 
-import javax.naming.AuthenticationException;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/authentication")
-public class AuthenticationEndpoint {
+public class AuthenticationService extends ResourceConfig {
 
-    AuthServiceImpl authService;
+    AuthenticationHandler authService;
     Database database;
 
     @POST
@@ -21,9 +24,10 @@ public class AuthenticationEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateUser(@FormParam("username") String username,
                                      @FormParam("password") String password) {
+
         database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
-        authService = new AuthServiceImpl(database, authUtils);
+        authService = new AuthenticationHandler();
 
 
         try {

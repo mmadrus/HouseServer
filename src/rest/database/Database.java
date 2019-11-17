@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import rest.models.User;
+import rest.service.CreateUserService;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -46,7 +47,7 @@ public class Database {
         System.out.println("MongoObjectId " + mongoObjectId.toString());
         database.changeStatusOfDevice(mongoObjectId);
 */
-        System.out.println(database.createUser("hej"));
+
     }
 
     public void changeStatusOfDevice(Object objectId) {

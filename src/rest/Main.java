@@ -1,5 +1,6 @@
 package rest;
 
+import rest.database.Database;
 import rest.service.CommandService;
 import rest.service.CreateUserService;
 import rest.service.HardwareService;
@@ -18,6 +19,7 @@ public class Main extends Application {
         HashSet h = new HashSet<Class<?>>();
         h.add(CommandService.class);
         h.add(CreateUserService.class);
+        h.add(Database.class);
         return h;
     }
 }

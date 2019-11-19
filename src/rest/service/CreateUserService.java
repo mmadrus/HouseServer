@@ -17,6 +17,7 @@ public class CreateUserService  {
     private CreateUserProtocol userProtocol = new CreateUserProtocol();
 
     @GET
+    @Path("test")
     public String ok () {
 
         return "createUser";

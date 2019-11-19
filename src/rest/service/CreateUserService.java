@@ -25,7 +25,7 @@ public class CreateUserService  {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String newUser(String json) {
+    public String newUser(String json) throws JSONException {
 
         /*System.out.println(json);
         JSONObject jsonObject = new JSONObject()

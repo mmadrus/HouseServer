@@ -78,48 +78,42 @@ public class Database {
     //Create user
 
     public String createUser(String jsonString) {
-        try {
-         /*   JSONObject filipTest = new JSONObject();
-            filipTest.put("firstName", "Filip");
-            filipTest.put("lastName", "BenkanssonjAO");
-            filipTest.put("password", "123456");
-            filipTest.put("userName", "Benka33");
-            filipTest.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
-            filipTest.put("email", "sm@somethingmore.com");
-            jsonString = filipTest.toString();  //"den som kommer från server"
+        /*   JSONObject filipTest = new JSONObject();
+           filipTest.put("firstName", "Filip");
+           filipTest.put("lastName", "BenkanssonjAO");
+           filipTest.put("password", "123456");
+           filipTest.put("userName", "Benka33");
+           filipTest.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
+           filipTest.put("email", "sm@somethingmore.com");
+           jsonString = filipTest.toString();  //"den som kommer från server"
 */
-            dbCollection = databaseObj.getCollection("User");
-            gson = new Gson();
-            User user = gson.fromJson(jsonString, User.class);
-            String userEmail = user.getEmail();
+        dbCollection = databaseObj.getCollection("user");
+        gson = new Gson();
+        User user = gson.fromJson(jsonString, User.class);
+        String userEmail = user.getEmail();
 
-            document = new BasicDBObject();
-            document.put("email", userEmail);
-            cursor = dbCollection.find(document);
+        document = new BasicDBObject();
+        document.put("email", userEmail);
+        cursor = dbCollection.find(document);
 
-            while (cursor.hasNext()) {
-                fetchedObject = cursor.next();
-                if (fetchedObject.toString().contains(userEmail)) {
+        while (cursor.hasNext()) {
+            fetchedObject = cursor.next();
+            if (fetchedObject.toString().contains(userEmail)) {
 
-                    return "Email address already in use";
-                }
-
+                return "Email address already in use";
             }
 
-            query = new BasicDBObject();
-            query.put("firstName", user.getFirstName());
-            query.put("lastName", user.getLastName());
-            query.put("password", user.getPassword());
-            query.put("userName", user.getUserName());
-            query.put("userId", user.getUserId());
-            query.put("email", user.getEmail());
-
-            dbCollection.insert(query);
-
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-            return "Unkown error";
         }
+
+        query = new BasicDBObject();
+        query.put("firstName", user.getFirstName());
+        query.put("lastName", user.getLastName());
+        query.put("password", user.getPassword());
+        query.put("userName", user.getUserName());
+        query.put("userId", user.getUserId());
+        query.put("email", user.getEmail());
+
+        dbCollection.insert(query);
 
         return "Created succesfully";
 

@@ -1,5 +1,6 @@
 package rest.service;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import rest.protocols.CommandProtocol;
 import rest.protocols.JSONProtocol;
@@ -32,11 +33,11 @@ public class CommandService  {
 
 
     @PUT
-    public String userRequest (String jsonString) {
+    public String userRequest (String jsonString) throws JSONException {
 
         JSONObject jsonObject = jsonProtocol.toJson(jsonString);
 
-        jsonObject = commandProtocol.protocolCheck(jsonObject);
+        jsonObject = commandProtocol.   protocolCheck(jsonObject);
 
         return jsonProtocol.fromJson(jsonObject);
     }

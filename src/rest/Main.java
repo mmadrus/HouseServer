@@ -1,11 +1,8 @@
 package rest;
 
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import rest.service.AuthenticationService;
+//import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import rest.service.*;
 import rest.resource.ServerTestClass;
-import rest.service.CommandService;
-import rest.service.LoginService;
-import rest.service.StartPageService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -23,6 +20,7 @@ public class Main extends Application {
         h.add(CommandService.class);
         h.add(AuthenticationService.class);
         h.add(ServerTestClass.class);
+        h.add(CreateUserService.class);
 
         return h;
     }

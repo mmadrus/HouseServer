@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
@@ -12,7 +14,7 @@ import rest.database.Database;
 
 public class CreateUserProtocol {
 
-    public JSONObject setProtocolString (JSONObject protocolString) {
+    public JSONObject setProtocolString (JSONObject protocolString) throws JSONException {
         JSONObject newUser = new JSONObject();
         String id = UUID.randomUUID().toString();
         newUser.put("userName", protocolString.getString("userName"));

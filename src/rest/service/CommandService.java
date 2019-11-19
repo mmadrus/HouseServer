@@ -12,7 +12,7 @@ public class CommandService  {
     private JSONProtocol jsonProtocol = new JSONProtocol();
     private CommandProtocol commandProtocol = new CommandProtocol();
 
-    @GET
+   /* @GET
     public String test () {
 
         JSONObject jo = new JSONObject()
@@ -26,8 +26,10 @@ public class CommandService  {
 
         System.out.println(jo.toString());
 
-        return jo.getString("result");
-    }
+        return "ok";
+    }*/
+
+
 
     @PUT
     public String userRequest (String jsonString) {

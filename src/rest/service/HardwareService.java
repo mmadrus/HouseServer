@@ -18,7 +18,7 @@ public class HardwareService extends Thread {
 
     private HardwareService () {
 
-        this.serialPort = SerialPort.getCommPort("/dev/cu.usbmodem14101");
+        this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001KMk");
         this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
         connectedToPort();
         this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
@@ -45,7 +45,7 @@ public class HardwareService extends Thread {
             while (serialPort.isOpen()) {
 
 
-                arudinoResponse = inputStream.readLine();
+                /*arudinoResponse = inputStream.readLine();
 
                 if (pauseThread) {
                     requestResponse = arudinoResponse;
@@ -54,7 +54,7 @@ public class HardwareService extends Thread {
 
                 }
 
-                System.out.println("Arduino response: " + arudinoResponse);
+                System.out.println("Arduino response: " + arudinoResponse);*/
 
             }
 
@@ -87,7 +87,7 @@ public class HardwareService extends Thread {
             int i = jsonObject.getInt("command");
             outputStream.write(i);
 
-            pauseThread = true;
+            /* = true;
 
             while (requestResponse.equals("")) {
                 try {
@@ -96,7 +96,7 @@ public class HardwareService extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
 
         } catch (Exception e) {
 

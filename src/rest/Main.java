@@ -1,9 +1,11 @@
 package rest;
 
-import rest.database.Database;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import rest.service.AuthenticationService;
+import rest.resource.ServerTestClass;
 import rest.service.CommandService;
-import rest.service.CreateUserService;
-import rest.service.HardwareService;
+import rest.service.LoginService;
+import rest.service.StartPageService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -15,11 +17,14 @@ public class Main extends Application {
 
     @Override
     public Set<Class<?>> getClasses () {
-
         HashSet h = new HashSet<Class<?>>();
+        h.add(StartPageService.class);
+        h.add(LoginService.class);
         h.add(CommandService.class);
-        h.add(CreateUserService.class);
-        h.add(Database.class);
+        h.add(AuthenticationService.class);
+        h.add(ServerTestClass.class);
+
         return h;
     }
 }
+

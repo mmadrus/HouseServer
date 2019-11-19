@@ -2,8 +2,16 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="184b8e3d-c98a-4b6b-aa7c-f8f5c6d1bc6c" name="aws-server" url="http://ec2-13-48-149-247.eu-north-1.compute.amazonaws.com">
-        <fileTransfer host="ec2-13-48-149-247.eu-north-1.compute.amazonaws.com" port="22" privateKey="C:\Users\Filip\Documents\aws-server\AWS-HouseServer.pem" rootFolder="/home/ubuntu" accessType="SFTP" keyPair="true">
+      <webServer id="acf03888-d6a2-411a-b674-f3bbcb9331e7" name="aws-sftp" url="http://ec2-13-48-149-247.eu-north-1.compute.amazonaws.com">
+        <fileTransfer host="ec2-13-48-149-247.eu-north-1.compute.amazonaws.com" port="22" privateKey="$USER_HOME$/AWS-HouseServer.pem" rootFolder="/home/ubuntu/staging" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="90360dc8-06fc-4ab0-a742-c2062a9d0e76" name="aws-sftp2" url="http://ec2-13-53-103-246.eu-north-1.compute.amazonaws.com">
+        <fileTransfer host="ec2-13-53-103-246.eu-north-1.compute.amazonaws.com" port="22" privateKey="$USER_HOME$/AWS-HouseServer.pem" rootFolder="/home/ubuntu/staging" accessType="SFTP" keyPair="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

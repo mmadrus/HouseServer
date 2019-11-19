@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="HouseServer:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/HouseServer_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="HouseServer" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="javax.persistence:javax.persistence-api:2.2" />
+          <element id="library" level="project" name="com.google.code.gson:gson:2.8.6" />
+          <element id="library" level="project" name="mongo-java-driver-3.11.2" />
+          <element id="library" level="project" name="jersey-media-multipart-2.17" />
+          <element id="library" level="project" name="mimepull-1.9.3" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="HouseServer/web/Web" />
+    </root>
+  </artifact>
+</component>

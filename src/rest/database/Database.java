@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import rest.models.House;
 import rest.models.User;
 
 /*
@@ -46,7 +47,17 @@ public class Database {
         System.out.println("MongoObjectId " + mongoObjectId.toString());
         database.changeStatusOfDevice(mongoObjectId);
 */
-        System.out.println(database.createUser("hej"));
+        //System.out.println(database.createUser("hej"));
+
+        Database db = Database.getInstance();
+        //db.getRooms("5de107ce454ec82185944700");
+
+        ArrayList<House> houses = db.getHouses("5ddfea939802af312021554f");
+        for (House house : houses){
+            System.out.println(house.getHouseID() + " " + house.getHouseName() +
+                    " " + house.getAddress() + " " + house.getPostno() + " " +
+                    house.getCity() + " " + house.getAccountID());
+        }
     }
 
     public void changeStatusOfDevice(Object objectId) {
@@ -188,6 +199,70 @@ public class Database {
 
             e.printStackTrace();
             return false;
+        }
+    }
+
+    //get list of houses owned by this user
+    public ArrayList<House> getHouses(String userid){
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        document.put("accountid", userid);
+        cursor = dbCollection.find(document);
+
+        ArrayList<House> houses = new ArrayList<>();
+
+        while(cursor.hasNext()){
+
+            BasicDBObject obj = (BasicDBObject) cursor.next();
+
+            String id = obj.get("_id").toString();
+            String name = obj.get("housename").toString();
+            String address = obj.get("address").toString();
+            String postno = obj.get("postno").toString();
+            String city = obj.get("city").toString();
+            String accountID = obj.get("accountid").toString();
+
+            houses.add(new House(id, name, address, postno, city, accountID));
+        }
+
+        return houses;
+    }
+
+    //get list of rooms inside the house
+    public void getRooms(String houseid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("houseid", houseid);
+        cursor = dbCollection.find(document);
+
+        while (cursor.hasNext()){
+            System.out.println(cursor.next());
+        }
+    }
+
+
+
+    //get information about the house
+    public void getHouseInfo(String houseid){
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(houseid));
+        cursor = dbCollection.find(document);
+
+        while(cursor.hasNext()){
+            System.out.println(cursor.next());
+        }
+    }
+
+    //get information about the room
+    public void getRoomInfo(String roomid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(roomid));
+        cursor = dbCollection.find(document);
+
+        while(cursor.hasNext()){
+            System.out.println(cursor.next());
         }
     }
 

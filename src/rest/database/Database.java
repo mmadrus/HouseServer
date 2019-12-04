@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import rest.models.House;
+import rest.models.Room;
 import rest.models.User;
 
 /*
@@ -57,9 +58,10 @@ public class Database {
 
         //System.out.println(db.hasHouse("5ddf9c659802af312021554d"));
         //System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "5ddfea939802af312021554e"));
-        //System.out.println(db.deleteHouse("5de68c2bc707335f49e7a92f"));
+        //System.out.println(db.deleteHouse("5de788ec3088d42a9441426d"));
         //System.out.println(db.isHouseExist("5de0f5c09802af3120215551"));
         //System.out.println(db.addRoom("Bathroom1", "Bathroom", "5de0f5c09802af3120215551"));
+        //System.out.println(db.deleteRoom("5de6a236a885340493488804"));
 
         /*
         House house = db.getHouses("5ddfea939802af312021554f");
@@ -68,6 +70,16 @@ public class Database {
             System.out.println("HouseID: " + house.getHouseID() + " Name: " + house.getHouseName() +
                     " Address: " + house.getAddress() + " Post no. " + house.getPostno() + " City: " +
                     house.getCity());
+        */
+
+
+        /*
+        ArrayList<Room> rooms = db.getRooms("5de0f5c09802af3120215551");
+        System.out.println("Rooms inside house ID: " + rooms.get(0).getHouseID());
+        for(Room room: rooms){
+            System.out.println(room.getRoomID() + " " +  room.getRoomName() + " "  +
+                    room.getRoomType());
+        }
         */
 
 
@@ -215,7 +227,7 @@ public class Database {
         }
     }
 
-    //get list of houses owned by this user
+    //get the house owned by this user
     public House getHouses(String userid){
         dbCollection = databaseObj.getCollection("House");
         document = new BasicDBObject();
@@ -242,17 +254,28 @@ public class Database {
     }
 
     //get list of rooms inside the house
-    public void getRooms(String houseid){
+    public ArrayList<Room> getRooms (String houseid){
         dbCollection = databaseObj.getCollection("Room");
         document = new BasicDBObject();
         document.put("houseid", houseid);
         cursor = dbCollection.find(document);
 
-        while (cursor.hasNext()){
-            System.out.println(cursor.next());
-        }
-    }
+        ArrayList<Room> rooms = new ArrayList<>();
 
+        while (cursor.hasNext()){
+            BasicDBObject obj = new BasicDBObject();
+            obj = (BasicDBObject) cursor.next();
+
+            String roomid = obj.get("_id").toString();
+            String roomname = obj.get("roomname").toString();
+            String roomtype = obj.get("roomtype").toString();
+            String houseID = obj.get("houseid").toString();
+
+            rooms.add(new Room(roomid, roomname, roomtype, houseID));
+        }
+
+        return rooms;
+    }
 
 
     //get information about the house
@@ -316,8 +339,16 @@ public class Database {
     public String deleteHouse(String houseid){
         boolean hasRoom = hasRooms(houseid);
         boolean isHouseExist = isHouseExist(houseid);
+        ArrayList<Room> rooms;
 
-        if (hasRoom == false && isHouseExist == true){
+        if (isHouseExist == true){
+
+            if (hasRoom == true) {
+                rooms = getRooms(houseid);
+                for (Room room : rooms) {
+                    deleteRoom(room.getRoomID());
+                }
+            }
 
             dbCollection = databaseObj.getCollection("House");
             document = new BasicDBObject();
@@ -327,12 +358,23 @@ public class Database {
 
         }
         else {
-            if (isHouseExist == true) {
-                return "Houses must have no rooms first before deleting this house";
-            }
-            else{
-                return "This house doesn't exist";
-            }
+            return "This house doesn't exist";
+        }
+    }
+
+    //remove the room of the house if it exist
+    public String deleteRoom(String roomid){
+        boolean isRoomExist = isRoomExist(roomid);
+
+        if (isRoomExist == true){
+            dbCollection = databaseObj.getCollection("Room");
+            document = new BasicDBObject();
+            document.put("_id", new ObjectId(roomid));
+            dbCollection.remove(document);
+            return "Successfully removed the room";
+        }
+        else{
+            return "Room doesn't exist";
         }
     }
 
@@ -349,6 +391,7 @@ public class Database {
         return false;
     }
 
+    //add room only if the house exist.
     public String addRoom(String roomname, String roomtype, String houseid){
         boolean isHouseExist = isHouseExist(houseid);
 
@@ -366,10 +409,24 @@ public class Database {
         }
     }
 
+    //check if the house exist
     public boolean isHouseExist(String houseid){
         dbCollection = databaseObj.getCollection("House");
         document = new BasicDBObject();
         document.put("_id", new ObjectId(houseid));
+        cursor = dbCollection.find(document);
+
+        if(cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
+    //check if the room exist
+    public boolean isRoomExist(String roomid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(roomid));
         cursor = dbCollection.find(document);
 
         if(cursor.hasNext()){

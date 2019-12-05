@@ -52,35 +52,56 @@ public class Database {
 
         Database db = Database.getInstance();
 
-        //db.getRooms("5de107ce454ec82185944700");
         //db.getHouseInfo("5de107ce454ec82185944700");
         //db.getRoomInfo("5de6359633cc2a2a94de316b");
+        //db.getDevices("5de6361933cc2a2a94de316c");
 
         //System.out.println(db.hasHouse("5ddf9c659802af312021554d"));
-        //System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "5ddfea939802af312021554e"));
-        //System.out.println(db.deleteHouse("5de788ec3088d42a9441426d"));
+        //System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "5de8f9ce33cc2a2a94de316f"));
+        //System.out.println(db.deleteHouse("5de8f691ac052a173740fc27"));
         //System.out.println(db.isHouseExist("5de0f5c09802af3120215551"));
-        //System.out.println(db.addRoom("Bathroom1", "Bathroom", "5de0f5c09802af3120215551"));
+        //System.out.println(db.addRoom("Bathroom2", "Bathroom", "5de8f691ac052a173740fc27"));
         //System.out.println(db.deleteRoom("5de6a236a885340493488804"));
+        //System.out.println(db.getHouseID("myHouse1", "5ddf9c659802af312021554d"));
+        //System.out.println(db.getRoomID("Living Room 1", "5de0f5c09802af3120215551"));
+        //System.out.println(db.isRoomExist("Living Room 1", "5de0f5c09802af3120215551"));
+        //System.out.println(db.addDevice("myDevice1", "Smoke Alarm", "ACTIVE", "5de6361933cc2a2a94de316c"));
+        //System.out.println(db.hasDevices("5de6361933cc2a2a94de316c"));
+        //System.out.println(db.isUserExist("5de8f9ce33cc2a2a94de316f"));
+        //System.out.println(db.deleteDevice("5de92c4333cc2a2a94de3171"));
 
         /*
-        House house = db.getHouses("5ddfea939802af312021554f");
-        System.out.println("House under the ownership of user iD:" + house.getAccountID());
+        House house = db.getHouses("5ddfea939802af312021554e");
+        if (house != null) {
+            System.out.println("House under the ownership of user iD:" + house.getAccountID());
 
             System.out.println("HouseID: " + house.getHouseID() + " Name: " + house.getHouseName() +
                     " Address: " + house.getAddress() + " Post no. " + house.getPostno() + " City: " +
                     house.getCity());
+        }
+        else{
+            System.out.println("No house owned by this user");
+        }
+
         */
+
 
 
         /*
-        ArrayList<Room> rooms = db.getRooms("5de0f5c09802af3120215551");
-        System.out.println("Rooms inside house ID: " + rooms.get(0).getHouseID());
-        for(Room room: rooms){
-            System.out.println(room.getRoomID() + " " +  room.getRoomName() + " "  +
-                    room.getRoomType());
+        ArrayList<Room> rooms = db.getRooms("5de107ce454ec82185944710");
+        if (rooms.size() != 0) {
+            System.out.println("Rooms inside house ID: " + rooms.get(0).getHouseID());
+            for (Room room : rooms) {
+                System.out.println(room.getRoomID() + " " + room.getRoomName() + " " +
+                        room.getRoomType());
+            }
         }
+        else{
+            System.out.println("No rooms inside this house");
+        }
+
         */
+
 
 
     }
@@ -315,11 +336,25 @@ public class Database {
         return false;
     }
 
+    //check if user exist
+    public boolean isUserExist(String accountid){
+        dbCollection = databaseObj.getCollection("User");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(accountid));
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
     //add a new house to the user only if the user didn't owned any house yet
     public String addHouse(String name, String address, String post, String city, String userid){
         boolean hasHouse = hasHouse(userid);
+        boolean isUserExist = isUserExist(userid);
 
-        if (hasHouse == false){
+        if (hasHouse == false && isUserExist == true){
             dbCollection = databaseObj.getCollection("House");
             document = new BasicDBObject();
             document.put("housename", name);
@@ -331,11 +366,19 @@ public class Database {
             return "Successfully added house";
         }
         else {
-            return "You already owned a house";
+            if (hasHouse == true){
+                return "You already owned a house";
+            }
+            else {
+                return "User must exist first before adding a house";
+            }
+
         }
     }
 
-    //remove the house from the user only if it has 0 rooms in it
+    //remove the house from the user only if it exists.
+    //if it has rooms, it will also delete all the room within this house.
+    //and eventually delete all the devices linked to these rooms.
     public String deleteHouse(String houseid){
         boolean hasRoom = hasRooms(houseid);
         boolean isHouseExist = isHouseExist(houseid);
@@ -364,9 +407,18 @@ public class Database {
 
     //remove the room of the house if it exist
     public String deleteRoom(String roomid){
+        boolean hasDevices = hasDevices(roomid);
         boolean isRoomExist = isRoomExist(roomid);
 
+
         if (isRoomExist == true){
+
+
+            if (hasDevices == true){
+                // remove all devices under this room
+            }
+
+
             dbCollection = databaseObj.getCollection("Room");
             document = new BasicDBObject();
             document.put("_id", new ObjectId(roomid));
@@ -394,8 +446,9 @@ public class Database {
     //add room only if the house exist.
     public String addRoom(String roomname, String roomtype, String houseid){
         boolean isHouseExist = isHouseExist(houseid);
+        boolean isRoomExist = isRoomExist(roomname, houseid);
 
-        if(isHouseExist == true){
+        if(isHouseExist == true && isRoomExist == false){
             dbCollection = databaseObj.getCollection("Room");
             document = new BasicDBObject();
             document.put("roomname", roomname);
@@ -405,7 +458,13 @@ public class Database {
             return "Successfully added room";
         }
         else{
-            return "This house doesn't exist";
+            if (isHouseExist == false) {
+                return "This house must exist first before adding a room";
+            }
+
+            else{
+                return "Room Name already existed";
+            }
         }
     }
 
@@ -434,5 +493,130 @@ public class Database {
         }
         return false;
     }
+
+    //another variant to check if room exist
+    public boolean isRoomExist(String roomname, String houseid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<>();
+        obj.add(new BasicDBObject("roomname", roomname));
+        obj.add(new BasicDBObject("houseid", houseid));
+        document.put("$and", obj);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
+    //get ID of this House
+    public String getHouseID(String housename, String userid){
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<>();
+        obj.add(new BasicDBObject("housename", housename));
+        obj.add(new BasicDBObject("accountid", userid));
+        document.put("$and", obj);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return cursor.next().get("_id").toString();
+        }
+        return "This house does not exist";
+    }
+
+    //get ID of this Room
+    public String getRoomID(String roomname, String houseid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<>();
+        obj.add(new BasicDBObject("roomname", roomname));
+        obj.add(new BasicDBObject("houseid", houseid));
+        document.put("$and", obj);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return cursor.next().get("_id").toString();
+        }
+        return "This room does not exist";
+    }
+
+    //add Device to this room
+    public String addDevice(String devicename, String type, String status, String roomid){
+        boolean isRoomExist = isRoomExist(roomid);
+
+        if (isRoomExist == true){
+            dbCollection = databaseObj.getCollection("Device");
+            document = new BasicDBObject();
+            document.put("devicename", devicename);
+            document.put("devicetype", type);
+            document.put("status", status);
+            document.put("roomid", roomid);
+            dbCollection.insert(document);
+            return "Successfully added device";
+        }
+        else{
+            return "Room must exist first before adding device";
+        }
+    }
+
+    //get all devices connected to this room
+    public void getDevices(String roomid){
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document.put("roomid", roomid);
+        cursor = dbCollection.find(document);
+
+        while (cursor.hasNext()){
+            System.out.println(cursor.next());
+        }
+    }
+
+    //checks if the room has any devices linked
+    public boolean hasDevices(String roomid){
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document.put("roomid", roomid);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
+    //remove a device from this room
+    public String deleteDevice(String deviceid){
+        boolean isDeviceExist = isDeviceExist(deviceid);
+
+        if (isDeviceExist == true){
+            dbCollection = databaseObj.getCollection("Device");
+            document = new BasicDBObject();
+            document.put("_id", new ObjectId(deviceid));
+            dbCollection.remove(document);
+            return "Successfully removed the device";
+        }
+        else{
+            return "Device does not exist";
+        }
+
+
+    }
+
+    //check if this device exists
+    public boolean isDeviceExist(String deviceid){
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(deviceid));
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
+
 
 }

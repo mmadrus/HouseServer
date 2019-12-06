@@ -9,7 +9,7 @@
       </artifact>
     </deployment>
     <server-settings>
-      <option name="DOMAIN" value="$USER_HOME$/Documents/glassfish5/glassfish/domains/domain1" />
+      <option name="DOMAIN" value="$PROJECT_DIR$/../../../../glassfish5/glassfish/domains/domain1" />
       <option name="PRESERVE" value="false" />
       <option name="COMPATIBILITY" value="false" />
       <option name="VIRTUAL_SERVER" />

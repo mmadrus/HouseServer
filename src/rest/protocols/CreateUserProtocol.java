@@ -5,13 +5,15 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 public class CreateUserProtocol {
 
-    public String setProtocolString (String protocolString) {
+    public String setProtocolString (String protocolString) throws JSONException {
         JSONObject newUser = new JSONObject(new JSONTokener(protocolString));
         String id = UUID.randomUUID().toString();
         newUser.put("ID", id);

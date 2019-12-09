@@ -1,5 +1,6 @@
 package rest.service;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import rest.protocols.CreateUserProtocol;
@@ -16,7 +17,7 @@ public class CreateUserService  {
         return "createUser";
     }
     @PUT
-    public String newUser(String json) {
+    public String newUser(String json) throws JSONException {
 
         /*System.out.println(json);
         JSONObject jsonObject = new JSONObject()

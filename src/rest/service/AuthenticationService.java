@@ -1,7 +1,5 @@
 package rest.service;
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import rest.database.Database;
 import rest.models.Token;

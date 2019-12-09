@@ -30,6 +30,7 @@ public class Database {
     private static final String PASSWORD = "serverisking";
     private static final String PORT_NUMBER = "27017";
     private static final String DATABASE = "smart_house";
+    int rommIdInt;
 
 
     private Gson gson;
@@ -43,7 +44,8 @@ public class Database {
     private DB databaseObj;
 
     public static void main(String[] args) {
-        getInstance().unitToServer(new JSONObject());
+        //    getInstance().unitToServer(new JSONObject());
+        getInstance().newRoom("18");
 
     }
 
@@ -204,13 +206,13 @@ public class Database {
                     for (int i = 1; i < rooms; i++) {
                         jsonArr.put(id.substring(0, 2));
                     }
-                    toAdd.put("Rooms", jsonArr);
+                    toAdd.put("roomList", jsonArr);
                     document.put("house", toAdd);
                     break;
 
                 case "Room":
                     jsonArr.put(id);
-                    toAdd.put("roomId", id.substring(1,2));
+                    toAdd.put("roomId", id.substring(1, 2));
                     toAdd.put("deviceList", jsonArr);
 
                     document.put("room", toAdd);
@@ -237,8 +239,54 @@ public class Database {
 
     }
 
-    private String[] parseDeviceId(String deviceId) {
-        return deviceId.split(";");
+    private void newRoom(String roomId) {
+        //Update house array of rooms. If room already exist, nothing will happen.
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        String houseId = roomId.substring(0, 1);
+        document.put("id", houseId);
+        cursor = dbCollection.find(document);
+        fetchedObject = cursor.next();
+        System.out.println(fetchedObject.toString());
+        BasicDBList arr = (BasicDBList) fetchedObject.get("roomList");
+        BasicDBList newArr = new BasicDBList();
+        System.out.println(arr.size());
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.println(arr.get(i));
+            if (arr.get(i).equals(roomId)) {
+                System.out.println("Room already in house list");
+
+            } else {
+                newArr.add(arr.get(i));
+
+            }
+        }
+
+        newArr.add(roomId);
+        System.out.println(newArr.toString().trim() + " efter adden");
+        query = new BasicDBObject();
+        BasicDBObject search = new BasicDBObject().append("id", houseId);
+        query.append("$set", new BasicDBObject().append("roomList", newArr));
+        System.out.println("Query.append " + query.toJson());
+
+        dbCollection.update(search, query);
+
+        document.clear();
+        //Check if room exist in Room documents, if not add it
+        dbCollection = databaseObj.getCollection("Room");
+        document.put("id", roomId);
+        cursor = dbCollection.find(document);
+        query = new BasicDBObject();
+        if (!cursor.hasNext()) {
+            query.put("id", roomId);
+            query.put("deviceList", new BasicDBList());
+            dbCollection.insert(query);
+
+        } else {
+            System.out.println("Room foundd, no need to create it");
+
+        }
+
 
     }
 

@@ -57,21 +57,24 @@ public class Database {
         //db.getDevices("5de6361933cc2a2a94de316c");
 
         //System.out.println(db.hasHouse("5ddf9c659802af312021554d"));
-        //System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "5de8f9ce33cc2a2a94de316f"));
+        System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "5deed2974953612e6c4030c3"));
         //System.out.println(db.deleteHouse("5de8f691ac052a173740fc27"));
         //System.out.println(db.isHouseExist("5de0f5c09802af3120215551"));
-        //System.out.println(db.addRoom("Bathroom2", "Bathroom", "5de8f691ac052a173740fc27"));
+        //System.out.println(db.addRoom("Bathroom1", "Bathroom", "5dee200d2675a14c3268e3bf"));
         //System.out.println(db.deleteRoom("5de6a236a885340493488804"));
         //System.out.println(db.getHouseID("myHouse1", "5ddf9c659802af312021554d"));
         //System.out.println(db.getRoomID("Living Room 1", "5de0f5c09802af3120215551"));
         //System.out.println(db.isRoomExist("Living Room 1", "5de0f5c09802af3120215551"));
-        //System.out.println(db.addDevice("myDevice1", "Smoke Alarm", "ACTIVE", "5de6361933cc2a2a94de316c"));
+        //System.out.println(db.addDevice("myDevice1", "Smoke Alarm", "ACTIVE", "5de6359633cc2a2a94de316b"));
         //System.out.println(db.hasDevices("5de6361933cc2a2a94de316c"));
         //System.out.println(db.isUserExist("5de8f9ce33cc2a2a94de316f"));
         //System.out.println(db.deleteDevice("5de92c4333cc2a2a94de3171"));
+        //System.out.println(db.deleteUser("5dee1fde4953612e6c4030c2"));
+
+
 
         /*
-        House house = db.getHouses("5ddfea939802af312021554e");
+        House house = db.getHouses("5ddfea939802af312021554f");
         if (house != null) {
             System.out.println("House under the ownership of user iD:" + house.getAccountID());
 
@@ -82,13 +85,14 @@ public class Database {
         else{
             System.out.println("No house owned by this user");
         }
-
         */
 
 
 
+
+
         /*
-        ArrayList<Room> rooms = db.getRooms("5de107ce454ec82185944710");
+        ArrayList<Room> rooms = db.getRooms("5de107ce454ec82185944700");
         if (rooms.size() != 0) {
             System.out.println("Rooms inside house ID: " + rooms.get(0).getHouseID());
             for (Room room : rooms) {
@@ -99,8 +103,8 @@ public class Database {
         else{
             System.out.println("No rooms inside this house");
         }
-
         */
+
 
 
 
@@ -174,7 +178,6 @@ public class Database {
 
                     return "Email address already in use";
                 }
-
             }
 
             query = new BasicDBObject();
@@ -353,6 +356,8 @@ public class Database {
     public String addHouse(String name, String address, String post, String city, String userid){
         boolean hasHouse = hasHouse(userid);
         boolean isUserExist = isUserExist(userid);
+        int newIDvalue = getHouseHighestID() + 1;
+        String newID = Integer.toString(newIDvalue);
 
         if (hasHouse == false && isUserExist == true){
             dbCollection = databaseObj.getCollection("House");
@@ -362,6 +367,7 @@ public class Database {
             document.put("postno", post);
             document.put("city", city);
             document.put("accountid", userid);
+            document.put("house-id", newID);
             dbCollection.insert(document);
             return "Successfully added house";
         }
@@ -405,7 +411,8 @@ public class Database {
         }
     }
 
-    //remove the room of the house if it exist
+    //remove the room of the house if it exist as
+    //well as the devices linked to this room
     public String deleteRoom(String roomid){
         boolean hasDevices = hasDevices(roomid);
         boolean isRoomExist = isRoomExist(roomid);
@@ -413,11 +420,9 @@ public class Database {
 
         if (isRoomExist == true){
 
-
             if (hasDevices == true){
                 // remove all devices under this room
             }
-
 
             dbCollection = databaseObj.getCollection("Room");
             document = new BasicDBObject();
@@ -600,8 +605,6 @@ public class Database {
         else{
             return "Device does not exist";
         }
-
-
     }
 
     //check if this device exists
@@ -616,6 +619,68 @@ public class Database {
         }
         return false;
     }
+
+    //removes the user account as well as the house, rooms
+    //and eventually devices associated with this user
+    public String deleteUser(String userid){
+        boolean hasHouse = hasHouse(userid);
+        boolean isUserExist = isUserExist(userid);
+
+        House house;
+
+        if (isUserExist == true){
+
+            if (hasHouse == true){
+                house = getHouses(userid);
+                deleteHouse(house.getHouseID());
+            }
+
+            dbCollection = databaseObj.getCollection("User");
+            document = new BasicDBObject();
+            document.put("_id", new ObjectId(userid));
+            dbCollection.remove(document);
+
+            return "Successfully removed the user";
+        }
+        else{
+            return "User does not exist";
+        }
+
+    }
+
+    public int getHouseHighestID(){
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        document.put("house-id", -1);
+        cursor = dbCollection.find().sort(document).limit(1);
+
+        if (cursor.hasNext()){
+            return Integer.parseInt(cursor.next().get("house-id").toString());
+        }
+        return 0;
+
+    }
+
+    /*
+    public String editHouse(String houseid){
+        dbCollection = databaseObj.getCollection("House");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(houseid));
+
+        List<BasicDBObject> newDocument = new ArrayList<>();
+    }
+
+    public String editRoom(String roomid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("_id", new ObjectId(roomid));
+
+        List<BasicDBObject> newDocument = new ArrayList<>();
+
+        //newDocument.put("$and", document);
+    }
+    */
+
 
 
 

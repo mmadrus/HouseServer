@@ -3,8 +3,6 @@ package rest.database;
 import java.util.*;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
 import org.json.JSONArray;
@@ -54,7 +52,7 @@ public class Database {
     public static Database getInstance() {
         if (database == null) {
 
-            database = new Database("hej");
+            database = new Database();
         }
         return database;
 
@@ -317,7 +315,7 @@ public class Database {
         query.put("firstName", user.getFirstName());
         query.put("lastName", user.getLastName());
         query.put("password", user.getPassword());
-        query.put("userName", user.getUserName());
+        query.put("username", user.getUsername());
         query.put("userId", user.getUserId());
         query.put("email", user.getEmail());
 
@@ -407,28 +405,28 @@ public class Database {
        testObject.put("password", "123");
        jsonString = testObject.toString();
 */
-        dbCollection = databaseObj.getCollection("User");
+        dbCollection = databaseObj.getCollection("user");
         document = new BasicDBObject();
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
-        document.put("userName", user.getUserName());
+        document.put("username", user.getUsername());
         document.put("password", user.getPassword());
-        System.out.println(user.getUserName());
+        System.out.println(user.getUsername());
         System.out.println(user.getPassword());
         cursor = dbCollection.find(document);
         while (cursor.hasNext()) {
             fetchedObject = cursor.next();
-            if (fetchedObject.toString().contains(user.getUserName())) {
+            if (fetchedObject.toString().contains(user.getUsername())) {
                 if (fetchedObject.toString().contains(user.getPassword())) {
                     return "1"; //Login successful
                 } else {
-                    return "0"; //Incorrect password
+                    return "2"; //Incorrect password
                 }
             } else {
-                return "0"; //Incorrect username
+                return "3"; //Incorrect username
             }
         }
-        return "0"; //Big fail eggs de
+        return "4"; //Big fail eggs de
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IAuthService {
 
-    public User authenticate(String userName, String userPassword) throws AuthenticationException;
+    public String authenticate(String userName, String userPassword) throws AuthenticationException;
 
     public List<Object> getUsers();
 

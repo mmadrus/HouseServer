@@ -1,11 +1,8 @@
 package rest;
 
 
-import rest.service.AuthenticationService;
+import rest.service.*;
 import rest.resource.ServerTestClass;
-import rest.service.CommandService;
-import rest.service.LoginService;
-import rest.service.StartPageService;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -19,9 +16,8 @@ public class Main extends Application {
     public Set<Class<?>> getClasses () {
         HashSet h = new HashSet<Class<?>>();
         h.add(StartPageService.class);
-        h.add(LoginService.class);
         h.add(CommandService.class);
-        h.add(AuthenticationService.class);
+        h.add(LoginService.class);
         h.add(ServerTestClass.class);
         h.add(CreateUserService.class);
 

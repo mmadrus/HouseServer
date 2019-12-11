@@ -17,7 +17,7 @@ public class CreateUserProtocol {
     public JSONObject setProtocolString (JSONObject protocolString) throws JSONException {
         JSONObject newUser = new JSONObject();
         String id = UUID.randomUUID().toString();
-        newUser.put("userName", protocolString.getString("userName"));
+        newUser.put("username", protocolString.getString("username"));
         newUser.put("email", protocolString.getString("email"));
         newUser.put("firstName", protocolString.getString("firstName"));
         newUser.put("lastName", protocolString.getString("lastName"));

@@ -293,7 +293,7 @@ public class Database {
            filipTest.put("email", "sm@somethingmore.com");
            jsonString = filipTest.toString();  //"den som kommer från server"
 */
-        dbCollection = databaseObj.getCollection("user");
+        dbCollection = databaseObj.getCollection("users");
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
         String userEmail = user.getEmail();
@@ -327,7 +327,7 @@ public class Database {
 
     //Find user
     public Object findUser(String id) {
-        dbCollection = databaseObj.getCollection("user");
+        dbCollection = databaseObj.getCollection("users");
 
         document = new BasicDBObject();
         document.put("userId", id);
@@ -347,7 +347,7 @@ public class Database {
 
     public List<Object> getAllUsers() {
         List<Object> allUsers = new ArrayList<>();
-        dbCollection = databaseObj.getCollection("user");
+        dbCollection = databaseObj.getCollection("users");
 
         cursor = dbCollection.find();
         while (cursor.hasNext()) {
@@ -387,7 +387,7 @@ public class Database {
        testObject.put("password", "123");
        jsonString = testObject.toString();
 */
-        dbCollection = databaseObj.getCollection("user");
+        dbCollection = databaseObj.getCollection("users");
         document = new BasicDBObject();
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);

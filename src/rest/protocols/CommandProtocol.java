@@ -1,5 +1,6 @@
 package rest.protocols;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 
@@ -7,7 +8,7 @@ public class CommandProtocol {
 
     private TokenProtocol tokenProtocol = new TokenProtocol();
 
-    public JSONObject protocolCheck (JSONObject jsonObject) {
+    public JSONObject protocolCheck (JSONObject jsonObject) throws JSONException {
 
         JSONObject returnObject = new JSONObject();
 

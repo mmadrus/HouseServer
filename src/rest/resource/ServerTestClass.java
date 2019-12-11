@@ -17,14 +17,6 @@ public class ServerTestClass {
 
     AuthenticationHandler authService;
 
-    @Path("test")
-    @GET
-    public String getString() {
-
-        return "penis";
-
-    }
-
     @GET
     @Path("/{userId}")
     public Response getUserWithName(@PathParam("userId") String name) {

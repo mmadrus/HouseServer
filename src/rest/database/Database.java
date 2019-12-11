@@ -295,7 +295,7 @@ public class Database {
            filipTest.put("email", "sm@somethingmore.com");
            jsonString = filipTest.toString();  //"den som kommer från server"
 */
-        dbCollection = databaseObj.getCollection("User");
+        dbCollection = databaseObj.getCollection("user");
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
         String userEmail = user.getEmail();
@@ -308,7 +308,7 @@ public class Database {
             fetchedObject = cursor.next();
             if (fetchedObject.toString().contains(userEmail)) {
 
-                return "0";
+                return "Email address already in use";
             }
 
         }
@@ -323,7 +323,7 @@ public class Database {
 
         dbCollection.insert(query);
 
-        return "1";
+        return "Created succesfully";
 
     }
 
@@ -380,26 +380,27 @@ public class Database {
 
 
 
-    /*  public boolean commandLog(JSONObject jsonObject) {
+  /*  public boolean commandLog(JSONObject jsonObject) {
 
-          try {
+        try {
 
-              dbCollection = databaseObj.getCollection("DeviceLog");
-              document = new BasicDBObject();
-              document.put("dateTime", new Date().getTime());
-              document.put("user-id", jsonObject.getString("user-id"));
-              document.put("device-id", jsonObject.getString("device-id"));
-              document.put("command", jsonObject.getInt("command"));
-              dbCollection.insert(document);
+            dbCollection = databaseObj.getCollection("DeviceLog");
+            document = new BasicDBObject();
+            document.put("dateTime", new Date().getTime());
+            document.put("user-id", jsonObject.getString("user-id"));
+            document.put("device-id", jsonObject.getString("device-id"));
+            document.put("command", jsonObject.getInt("command"));
+            dbCollection.insert(document);
 
-              return true;
+            return true;
 
-          } catch (Exception e) {
+        } catch (Exception e) {
 
-              e.printStackTrace();
-              return false;
-          }
-      }*/
+            e.printStackTrace();
+            return false;
+        }
+    }*/
+
     public String loginMethod(String jsonString) {
       /* JSONObject testObject = new JSONObject();
        testObject.put("userName", "IsakZ");
@@ -429,6 +430,5 @@ public class Database {
         }
         return "0"; //Big fail eggs de
     }
-
 
 }

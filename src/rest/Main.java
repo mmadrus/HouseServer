@@ -23,6 +23,7 @@ public class Main extends Application {
         h.add(CommandService.class);
         h.add(AuthenticationService.class);
         h.add(ServerTestClass.class);
+        h.add(CreateUserService.class);
 
         return h;
     }

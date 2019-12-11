@@ -1,13 +1,10 @@
 package rest.service;
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import rest.database.Database;
 import rest.models.Token;
 import rest.resource.AuthenticationHandler;
 import rest.utils.AuthUtils;
-
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

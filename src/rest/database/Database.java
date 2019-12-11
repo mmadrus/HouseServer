@@ -1,14 +1,17 @@
 package rest.database;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.Consumer;
 
 import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.*;
+import org.bson.Document;
 import org.json.JSONException;
+import org.json.JSONObject;
 import rest.models.User;
+import rest.protocols.JSONProtocol;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -20,9 +23,10 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
 */
 
+@SuppressWarnings("deprecation")
 public class Database {
 
-    private static final String URL = "ec2-13-48-149-247.eu-north-1.compute.amazonaws.com";
+    private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
     private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
     private static final String PASSWORD = "serverisking";
@@ -45,6 +49,99 @@ public class Database {
         MongoClientURI uri = new MongoClientURI("mongodb://" + AUTH_USER + ":" + PASSWORD + "@" + URL + ":" + PORT_NUMBER + "/" + DATABASE);
         mongoClient = new MongoClient(uri);
         databaseObj = mongoClient.getDB("smart_house");
+    }
+
+    public void addDevices () {
+
+        dbCollection = databaseObj.getCollection("devices");
+        dbCollection.drop();
+        dbCollection = databaseObj.getCollection("devices");
+
+        document = new BasicDBObject();
+        document.put("deviceId", "01");
+        document.put("status", 0);
+        document.put("deviceName", "Indoor Lamp");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "02");
+        document.put("status", 0);
+        document.put("deviceName", "Outdoor Lamp");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "03");
+        document.put("status", 0);
+        document.put("deviceName", "Indoor Temp");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "04");
+        document.put("status", 0);
+        document.put("deviceName", "Outdoor Temp");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "05");
+        document.put("status", 0);
+        document.put("deviceName", "Water Leakage");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "06");
+        document.put("status", 0);
+        document.put("deviceName", "Stove");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "07");
+        document.put("status", 0);
+        document.put("deviceName", "Fire Alarm");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "08");
+        document.put("status", 0);
+        document.put("deviceName", "Window");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "09");
+        document.put("status", 0);
+        document.put("deviceName", "Radiator");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+        document = new BasicDBObject();
+        document.put("deviceId", "10");
+        document.put("status", 0);
+        document.put("deviceName", "Electric Consumption");
+        document.put("flag", false);
+        dbCollection.insert(document);
+
+    }
+
+    public String getDev () {
+
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document = new BasicDBObject();
+        cursor = dbCollection.find(document);
+        String s = "";
+
+            fetchedObject = cursor.next();
+            s = fetchedObject.toString();
+
+
+        return s;
     }
 
 
@@ -169,15 +266,17 @@ public class Database {
 
     }
 
-  /*  public boolean commandLog(JSONObject jsonObject) {
+    public boolean commandLog(JSONObject jsonObject) {
 
         try {
 
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = formatter.format(new Date());
             dbCollection = databaseObj.getCollection("DeviceLog");
             document = new BasicDBObject();
-            document.put("dateTime", new Date().getTime());
-            document.put("user-id", jsonObject.getString("user-id"));
-            document.put("device-id", jsonObject.getString("device-id"));
+            document.put("dateTime", date);
+            document.put("userId", jsonObject.getString("userId"));
+            document.put("deviceId", jsonObject.getInt("deviceId"));
             document.put("command", jsonObject.getInt("command"));
             dbCollection.insert(document);
 
@@ -188,7 +287,35 @@ public class Database {
             e.printStackTrace();
             return false;
         }
-    }*/
+    }
+
+    public void readLog() {
+
+        try {
+
+
+            dbCollection = databaseObj.getCollection("DeviceLog");
+
+            document = new BasicDBObject();
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+                fetchedObject = cursor.next();
+                System.out.println(fetchedObject.toString());
+
+            }
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    public Document [] getUpdates () {
+
+        return null;
+    }
 
 
 }

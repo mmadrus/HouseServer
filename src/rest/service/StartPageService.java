@@ -1,13 +1,13 @@
 package rest.service;
 
 
+import org.glassfish.tyrus.server.Server;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Path("")
 public class StartPageService {
-
-
 
     @GET
     public String getStartPage() {

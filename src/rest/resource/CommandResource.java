@@ -1,6 +1,7 @@
 package rest.resource;
 
 import org.json.JSONObject;
+import rest.database.Database;
 import rest.protocols.CommandProtocol;
 import rest.protocols.JSONProtocol;
 
@@ -37,9 +38,21 @@ public class CommandResource {
 
         System.out.println(jsonObject.toString());
 
-        JSONObject bajs = commandProtocol.protocolCheck(jsonObject);
+        JSONObject obj = commandProtocol.protocolCheck(jsonObject);
 
-        return Response.ok(bajs.toString()).header("Access-Control-Allow-Origin", "*").build();
+        return Response.ok(obj.toString()).header("Access-Control-Allow-Origin", "*").build();
+    }
+
+    @GET
+    @Path("/update")
+    public Response getDeviceUp () {
+
+
+        String s = Database.getInstance().getDev();
+
+        JSONObject jsonObject = JSONProtocol.getInstance().toJson(s);
+
+        return Response.ok(jsonObject.toString()).header("Access-Control-Allow-Origin", "*").build();
     }
 
 

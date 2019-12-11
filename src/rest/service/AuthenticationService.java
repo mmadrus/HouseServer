@@ -1,7 +1,6 @@
 package rest.service;
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import rest.database.Database;
 import rest.models.Token;
@@ -13,13 +12,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/authentication")
-public class AuthenticationService extends ResourceConfig {
+//@Path("/authentication")
+public class AuthenticationService{
 
     AuthenticationHandler authService;
     Database database;
 
-    @POST
+ /*   @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response authenticateUser(@FormParam("username") String username,
@@ -39,5 +38,5 @@ public class AuthenticationService extends ResourceConfig {
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package rest;
 
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
+
 import rest.service.AuthenticationService;
 import rest.resource.ServerTestClass;
 import rest.service.CommandService;

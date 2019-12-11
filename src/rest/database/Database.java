@@ -51,6 +51,16 @@ public class Database {
 
     }
 
+    public static Database getInstance() {
+        if (database == null) {
+
+            database = new Database("hej");
+        }
+        return database;
+
+
+    }
+
     private Database(String s) {
         mongoClient = new MongoClient("ec2-13-48-149-247.eu-north-1.compute.amazonaws.com", 27017);
         databaseObj = mongoClient.getDB("smart_house");
@@ -351,15 +361,24 @@ public class Database {
         return allUsers;
     }
 
-    public static Database getInstance() {
-        if (database == null) {
+    //Authenticate user
+    public Object authenticateUser(String username, String password) {
+        dbCollection = databaseObj.getCollection("user");
 
-            database = new Database("hej");
+        document = new BasicDBObject();
+        document.put(username, password);
+        cursor = dbCollection.find(document);
+
+        if (!cursor.hasNext()) {
+            return "No such user";
         }
-        return database;
 
+        fetchedObject = cursor.next();
 
+        return fetchedObject;
     }
+
+
 
     /*  public boolean commandLog(JSONObject jsonObject) {
 

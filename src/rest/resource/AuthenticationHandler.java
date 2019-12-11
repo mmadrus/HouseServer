@@ -22,8 +22,18 @@ public class AuthenticationHandler implements IAuthService {
         this.authUtils = new AuthUtils();
     }
 
-
     @Override
+    public User authenticate(String username, String password) {
+        User user = new User();
+
+        database.authenticateUser(username, password);
+
+        if (database.authenticateUser(username, password) == user)
+
+        return user;
+    }
+
+   /* @Override
     public User authenticate(String username, String password) throws AuthenticationException {
         UserProfileDto userProfile = new UserProfileDto();
 
@@ -51,7 +61,7 @@ public class AuthenticationHandler implements IAuthService {
         }
 
         return userEntity;
-    }
+    }*/
 
     @Override
     public List<Object> getUsers() { return database.getAllUsers(); }

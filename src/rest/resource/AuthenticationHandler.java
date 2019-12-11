@@ -27,7 +27,6 @@ public class AuthenticationHandler implements IAuthService {
     public String authenticate(String username, String password) {
         User user = new User();
 
-        database.authenticateUser(username, password);
 
         return "ok";
     }

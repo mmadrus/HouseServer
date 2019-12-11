@@ -22,7 +22,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
 public class Database {
 
-    private static final String URL = "ec2-13-48-149-247.eu-north-1.compute.amazonaws.com";
+    private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
     private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
     private static final String PASSWORD = "serverisking";
@@ -60,7 +60,7 @@ public class Database {
     }
 
     private Database(String s) {
-        mongoClient = new MongoClient("ec2-13-48-149-247.eu-north-1.compute.amazonaws.com", 27017);
+        mongoClient = new MongoClient("ec2-13-48-28-82.eu-north-1.compute.amazonaws.com", 27017);
         databaseObj = mongoClient.getDB("smart_house");
 
     }
@@ -359,25 +359,6 @@ public class Database {
         return allUsers;
     }
 
-    //Authenticate user
-    public Object authenticateUser(String username, String password) {
-        dbCollection = databaseObj.getCollection("user");
-
-        document = new BasicDBObject();
-        document.put(username, password);
-        cursor = dbCollection.find(document);
-
-        if (!cursor.hasNext()) {
-            return "No such user";
-        }
-
-        fetchedObject = cursor.next();
-
-        return fetchedObject;
-    }
-
-
-
   /*  public boolean commandLog(JSONObject jsonObject) {
 
         try {
@@ -399,6 +380,7 @@ public class Database {
         }
     }*/
 
+    //Authenticate user
     public String loginMethod(String jsonString) {
       /* JSONObject testObject = new JSONObject();
        testObject.put("userName", "IsakZ");

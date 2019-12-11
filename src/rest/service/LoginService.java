@@ -31,18 +31,20 @@ public class LoginService {
         database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
         authService = new AuthenticationHandler();
-        // try {
         JSONObject authenticateUser = new JSONObject(new JSONTokener(json));
 
 
         Token token = new Token();
+        String userAuthenticated = loginProtocol.setProtocolString(authenticateUser).toString();
 
-        return loginProtocol.setProtocolString(authenticateUser).toString();
+        if (userAuthenticated.equalsIgnoreCase("1")) {
+            //return Response.ok(token).build();
+            return "ok";
+        } else {
+            //return Response.status(Response.Status.BAD_REQUEST).build();
+            return "not ok";
+        }
 
-      /*      return Response.ok(token).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }*/
     }
 }
 

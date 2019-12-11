@@ -5,7 +5,7 @@
     <option name="OPEN_IN_BROWSER_URL" value="http://ec2-13-48-149-247.eu-north-1.compute.amazonaws.com:8080/HouseServer_war_exploded/" />
     <option name="UPDATING_POLICY" value="hot-swap-classes" />
     <deployment>
-      <artifact name="HouseServer1:war exploded">
+      <artifact name="HouseServer:war exploded">
         <settings />
       </artifact>
     </deployment>
@@ -52,7 +52,7 @@
     <method v="2">
       <option name="Make" enabled="true" />
       <option name="BuildArtifacts" enabled="true">
-        <artifact name="HouseServer1:war exploded" />
+        <artifact name="HouseServer:war exploded" />
       </option>
     </method>
   </configuration>

@@ -43,13 +43,17 @@ public class Database {
     private DB databaseObj;
 
     public static void main(String[] args) {
-        getInstance().unitToServer(new JSONObject());
+        //getInstance().unitToServer(new JSONObject());
+
+        Database database = Database.getInstance();
+
+        System.out.println(database.getAllUsers());
 
     }
 
     private Database(String s) {
-        mongoClient = new MongoClient("localhost", 27017);
-        databaseObj = mongoClient.getDB("HouseDatabase");
+        mongoClient = new MongoClient("ec2-13-48-149-247.eu-north-1.compute.amazonaws.com", 27017);
+        databaseObj = mongoClient.getDB("smart_house");
 
     }
 

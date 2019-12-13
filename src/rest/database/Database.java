@@ -1,5 +1,6 @@
 package rest.database;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,7 +8,10 @@ import java.util.logging.Logger;
 import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.*;
+import org.bson.Document;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import rest.models.User;
 
 /*
@@ -164,32 +168,6 @@ public class Database {
         return s;
     }
 
-    public boolean commandLog(JSONObject jsonObject) {
-
-        try {
-/*
- json.put("token", "123455");
-            json.put("requestType", "lightOn?");
-            json.put("userId", "1");
-            json.put("deviceId", "1;2;355");
-            json.put("command", "1");
- */
-            dbCollection = databaseObj.getCollection("DeviceLog");
-            document = new BasicDBObject();
-            document.put("dateTime", new Date().getTime());
-            document.put("user-id", jsonObject.getString("userId"));
-            document.put("device-id", jsonObject.getString("deviceId"));
-            document.put("command", jsonObject.getString("command"));
-            dbCollection.insert(document);
-
-            return true;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     private void unitToServer(JSONObject fromServer) {
 
@@ -452,15 +430,6 @@ public class Database {
         return allUsers;
     }
 
-    public static Database getInstance() {
-        if (database == null) {
-
-            database = new Database();
-        }
-        return database;
-
-
-    }
 
     public boolean commandLog(JSONObject jsonObject) {
 
@@ -508,7 +477,7 @@ public class Database {
         }
     }
 
-    public Document [] getUpdates () {
+    public Document[] getUpdates () {
 
         return null;
     }

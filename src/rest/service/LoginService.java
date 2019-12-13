@@ -26,7 +26,7 @@ public class LoginService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String authenticateUser(String json) throws JSONException {
+    public Response authenticateUser(String json) throws JSONException {
 
         database = Database.getInstance();
         AuthUtils authUtils = new AuthUtils();
@@ -38,11 +38,11 @@ public class LoginService {
         String userAuthenticated = loginProtocol.setProtocolString(authenticateUser).toString();
 
         if (userAuthenticated.contains("1")) {
-            //return Response.ok(token).build();
-            return "ok";
+            return Response.ok(token).build();
+            //return "ok";
         } else {
-            //return Response.status(Response.Status.BAD_REQUEST).build();
-            return "not ok";
+            return Response.status(Response.Status.BAD_REQUEST).build();
+            //return "not ok";
         }
 
     }

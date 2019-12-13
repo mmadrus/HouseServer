@@ -10,28 +10,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
+import rest.database.Database;
 
 public class CreateUserProtocol {
 
-    public String setProtocolString (String protocolString) throws JSONException {
-        JSONObject newUser = new JSONObject(new JSONTokener(protocolString));
+    public JSONObject setProtocolString (JSONObject protocolString) throws JSONException {
+        JSONObject newUser = new JSONObject();
         String id = UUID.randomUUID().toString();
-        newUser.put("ID", id);
+        newUser.put("username", protocolString.getString("username"));
+        newUser.put("email", protocolString.getString("email"));
+        newUser.put("firstName", protocolString.getString("firstName"));
+        newUser.put("lastName", protocolString.getString("lastName"));
+        newUser.put("password", protocolString.getString("password"));
+        newUser.put("userId", id);
+
+        String dbResponse = Database.getInstance().createUser(newUser.toString());
 
         JSONObject serverReply = new JSONObject();
-        serverReply.put("token", "server-generated token");
+        serverReply.put("token", id);
         serverReply.put("request-type", "create-user");
-        serverReply.put("result", "1");
-        String reply = serverReply.toString();
+        serverReply.put("result", dbResponse);
 
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("newUser.json"));
-            out.write(newUser.toString());
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return reply;
+        return serverReply;
     }
 }

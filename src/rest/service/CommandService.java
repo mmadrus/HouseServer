@@ -37,7 +37,7 @@ public class CommandService  {
 
         JSONObject jsonObject = jsonProtocol.toJson(jsonString);
 
-        jsonObject = commandProtocol.protocolCheck(jsonObject);
+        jsonObject = commandProtocol.   protocolCheck(jsonObject);
 
         return jsonProtocol.fromJson(jsonObject);
     }

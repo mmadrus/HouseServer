@@ -1,42 +1,50 @@
 package rest.service;
 
-import rest.interfaces.IAuthService;
-import rest.protocols.LoginProtocol;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import rest.database.Database;
+import rest.models.Token;
+import rest.protocols.LoginProtocol;
+import rest.resource.AuthenticationHandler;
+import rest.utils.AuthUtils;
+
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("service/login")
+@Path("/authenticate")
 public class LoginService {
 
-    private LoginProtocol loginProtocol = new LoginProtocol();
-    private String protocolType, responseString;
-    private Response response;
+    AuthenticationHandler authService;
+    Database database;
 
-    private IAuthService authService;
-
-    @GET
-    @Path("ok")
-    public String ok () {
-
-        return "ok";
-    }
-
+    LoginProtocol loginProtocol = new LoginProtocol();
 
     @POST
-    public String protocolCheck (String protocolString) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response authenticateUser(String json) throws JSONException {
 
-        protocolType = protocolString.substring(0,1);
-
-        if (protocolString.equals("C")) {
-
-            responseString = loginProtocol.setProtocolString(protocolString);
-
+        database = Database.getInstance();
+        AuthUtils authUtils = new AuthUtils();
+        authService = new AuthenticationHandler();
+        JSONObject authenticateUser = new JSONObject(new JSONTokener(json));
 
 
+        Token token = new Token();
+        String userAuthenticated = loginProtocol.setProtocolString(authenticateUser).toString();
+
+        if (userAuthenticated.contains("1")) {
+            return Response.ok(token).build();
+            //return "ok";
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+            //return "not ok";
         }
-        return "ok";
+
     }
 }
+

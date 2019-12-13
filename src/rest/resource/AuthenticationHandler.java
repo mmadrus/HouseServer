@@ -7,6 +7,7 @@ import rest.models.UserProfileDto;
 import rest.utils.AuthUtils;
 
 import javax.naming.AuthenticationException;
+import javax.ws.rs.PathParam;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,8 +23,15 @@ public class AuthenticationHandler implements IAuthService {
         this.authUtils = new AuthUtils();
     }
 
-
     @Override
+    public String authenticate(String username, String password) {
+        User user = new User();
+
+
+        return "ok";
+    }
+
+   /* @Override
     public User authenticate(String username, String password) throws AuthenticationException {
         UserProfileDto userProfile = new UserProfileDto();
 
@@ -51,13 +59,17 @@ public class AuthenticationHandler implements IAuthService {
         }
 
         return userEntity;
+    }*/
+
+    @Override
+    public List<Object> getUsers() {
+        return database.getAllUsers();
     }
 
     @Override
-    public List<Object> getUsers() { return database.getAllUsers(); }
-
-    @Override
-    public  Object getUserWithName() { return database.findUser("1");}
+    public Object getUserWithName() {
+        return database.findUser("1");
+    }
 
     @Override
     public String resetSecurityDetails(String userName, String userPassword) {
@@ -68,7 +80,7 @@ public class AuthenticationHandler implements IAuthService {
     private Object getUserProfile(String userName) {
         Object returnValue = null;
         try {
-             returnValue = this.database.findUser(userName);
+            returnValue = this.database.findUser(userName);
         } finally {
             // this.database.closeConnection();
         }

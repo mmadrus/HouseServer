@@ -8,23 +8,23 @@ public class House {
     String address;
     String postno;
     String city;
-    String accountID;
+    String password;
 
-    public House(String houseID, String houseName, String address, String postno, String city, String accountID) {
+    public House(String houseID, String houseName, String address, String postno, String city, String password) {
         this.houseID = houseID;
         this.houseName = houseName;
         this.address = address;
         this.postno = postno;
         this.city = city;
-        this.accountID = accountID;
+        this.password = password;
     }
 
-    public String getAccountID() {
-        return accountID;
+    public String getPassword() {
+        return password;
     }
 
-    public void setAccountID(String accountID) {
-        this.accountID = accountID;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getHouseID() {

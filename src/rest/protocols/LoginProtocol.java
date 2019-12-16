@@ -15,7 +15,7 @@ public class LoginProtocol {
         authenticateUser.put("password", protocolString.getString("password"));
 
 
-        String dbResponse = Database.getInstance().loginMethod(authenticateUser.toString());
+        JSONObject dbResponse = Database.getInstance().loginMethod(authenticateUser);
 
         JSONObject serverReply = new JSONObject();
         serverReply.put("token", id);

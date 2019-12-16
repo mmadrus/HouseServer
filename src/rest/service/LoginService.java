@@ -35,14 +35,13 @@ public class LoginService {
 
 
         Token token = new Token();
-        String userAuthenticated = loginProtocol.setProtocolString(authenticateUser).toString();
+        loginProtocol.setProtocolString(authenticateUser);
 
-        if (userAuthenticated.contains("1")) {
+        if (Database.result == 1) {
             return Response.ok(token).build();
-            //return "ok";
+
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
-            //return "not ok";
         }
 
     }

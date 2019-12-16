@@ -40,6 +40,8 @@ public class Database {
     private MongoCredential mongoCredential = null;
     private DB databaseObj;
 
+    public static boolean isAuthenticated = false;
+
     public static void main(String[] args) {
         //getInstance().unitToServer(new JSONObject());
 
@@ -400,7 +402,9 @@ public class Database {
             fetchedObject = cursor.next();
             if (fetchedObject.toString().contains(user.getUsername())) {
                 if (fetchedObject.toString().contains(user.getPassword())) {
-                    return "1"; //Login successful
+                    isAuthenticated = true;
+                    return "1";//Login successful
+
                 } else {
                     return "2"; //Incorrect password
                 }

@@ -37,7 +37,7 @@ public class LoginService {
         Token token = new Token();
         String userAuthenticated = loginProtocol.setProtocolString(authenticateUser).toString();
 
-        if (userAuthenticated.contains("1")) {
+        if (Database.isAuthenticated) {
             return Response.ok(token).build();
             //return "ok";
         } else {

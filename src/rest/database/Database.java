@@ -75,12 +75,6 @@ public class Database {
 
     }
 
-    private Database(String s) {
-        mongoClient = new MongoClient("ec2-13-48-28-82.eu-north-1.compute.amazonaws.com", 27017);
-        databaseObj = mongoClient.getDB("smart_house");
-
-    }
-
     private Database() {
         MongoClientURI uri = new MongoClientURI("mongodb://" + AUTH_USER + ":" + PASSWORD + "@" + URL + ":" + PORT_NUMBER + "/" + DATABASE);
         mongoClient = new MongoClient(uri);
@@ -398,7 +392,7 @@ public class Database {
                     System.out.println("House found!");
                     return true;
                 }
-            case "Room":
+            case "rooms":
                 dbCollection = databaseObj.getCollection(entity);
                 document.put("roomId", id);
                 cursor = dbCollection.find(document);
@@ -411,7 +405,7 @@ public class Database {
                     return true;
                 }
 
-            case "Device":
+            case "devices":
                 dbCollection = databaseObj.getCollection(entity);
                 document.put("deviceId", id);
                 cursor = dbCollection.find(document);
@@ -1035,5 +1029,7 @@ public class Database {
             return jsonArray;
         }
     }
+
+
 
 }

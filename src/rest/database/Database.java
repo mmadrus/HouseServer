@@ -403,7 +403,7 @@ public class Database {
             if (fetchedObject.toString().contains(user.getUsername())) {
                 if (fetchedObject.toString().contains(user.getPassword())) {
                     isAuthenticated = true;
-                    return "1";//Login successful
+                    return "Su";//Login successful
 
                 } else {
                     return "2"; //Incorrect password

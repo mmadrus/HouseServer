@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import rest.models.User;
+import rest.protocols.JSONProtocol;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -437,7 +438,7 @@ public class Database {
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = formatter.format(new Date());
-            dbCollection = databaseObj.getCollection("DeviceLog");
+            dbCollection = databaseObj.getCollection("device_log");
             document = new BasicDBObject();
             document.put("dateTime", new Date().getTime());
             document.put("user-id", jsonObject.getString("user-id"));
@@ -459,7 +460,7 @@ public class Database {
         try {
 
 
-            dbCollection = databaseObj.getCollection("DeviceLog");
+            dbCollection = databaseObj.getCollection("device_log");
 
             document = new BasicDBObject();
             cursor = dbCollection.find(document);
@@ -511,6 +512,37 @@ public class Database {
             }
         }
         return "4"; //Big fail eggs de
+    }
+
+    public JSONArray getDevices () {
+
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            document = new BasicDBObject();
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+                fetchedObject = cursor.next();
+                jsonObject = JSONProtocol.getInstance().toJson(fetchedObject.toString());
+                jsonArray.put(jsonObject);
+
+            }
+
+            return jsonArray;
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return jsonArray;
+        }
     }
 
 }

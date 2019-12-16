@@ -1,5 +1,6 @@
 package rest.resource;
 
+import org.json.JSONArray;
 import rest.database.Database;
 
 import javax.ws.rs.GET;
@@ -13,13 +14,17 @@ public class DeviceResource {
     @Path("/update")
     public Response getUpdates () {
 
-        return Response.ok("Device update").build();
+
+
+        return Response.ok("Get Update").build();
     }
 
     @GET
     @Path("/newinstance")
     public Response getCurrentStatus () {
 
-        return Response.ok("Device current status").build();
+        JSONArray jsonArray = Database.getInstance().getDevices();
+
+        return Response.ok(jsonArray.toString()).build();
     }
 }

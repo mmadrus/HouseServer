@@ -3,25 +3,16 @@ package rest.database;
 import java.util.*;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
-import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import rest.models.House;
-import rest.models.Room;
 import rest.models.User;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
 Use the correct port for your server.
-
-To get the object id(mongoDB's object ID, looks like: "5dc199596d60d45f6409d791"), use the method "getObjectId", which returns the object ID.
-The method uses "our" object id notation (e.g. 1234, as protocol states)
-
 
 */
 
@@ -47,6 +38,12 @@ public class Database {
     private DB databaseObj;
 
 
+    public static void main(String[] args) {
+        //    getInstance().unitToServer(new JSONObject());
+        System.out.println(getInstance().getRoom(new JSONObject()));
+
+    }
+
     private Database(String s) {
         mongoClient = new MongoClient("localhost", 27017);
         databaseObj = mongoClient.getDB("HouseDatabase");
@@ -58,7 +55,6 @@ public class Database {
         mongoClient = new MongoClient(uri);
         databaseObj = mongoClient.getDB("smart_house");
     }
-
     /*
     commandType 1 == login
     commandType 2 == deviceLog
@@ -67,7 +63,9 @@ public class Database {
     commandType 5 == create new house log
     commandType 6 ==
     commandType 7 == create new Device
+    commandType 9 ==
      */
+
     public boolean commandLog(JSONObject jsonObject, int commandType) {
         System.out.println("Log created with type " + commandType);
         dbCollection = databaseObj.getCollection("Logs");
@@ -80,7 +78,7 @@ public class Database {
 
                     document.put("requestType", jsonObject.getString("requestType"));
                     document.put("logTime", new Date());
-                    document.put("userName", jsonObject.getString("userName"));
+                    document.put("username", jsonObject.getString("username"));
                     document.put("password", jsonObject.getString("password"));
                     document.put("requestResult", jsonObject.getString("result"));
                     System.out.println("request log added");
@@ -99,11 +97,10 @@ public class Database {
                     break;
                 case 3:
 
-                    document.put("userID", jsonObject.getString("userID"));
+                    document.put("username", jsonObject.getString("username"));
                     document.put("token", jsonObject.getString("token"));
-                    document.put("requesType", jsonObject.getString("requestType"));
+                    document.put("date", new Date());
                     document.put("houseID", jsonObject.getString("houseID"));
-                    dbCollection.insert(document);
 
 
                     break;
@@ -130,11 +127,20 @@ public class Database {
                     dbCollection = databaseObj.getCollection("DeviceLog");
                     document = new BasicDBObject();
                     document.put("requestType", "createDevice");
-                    document.put("userName", jsonObject.getString("userName"));
+                    document.put("username", jsonObject.getString("username"));
                     document.put("roomID", jsonObject.getString("roomID"));
 
 
                     break;
+                case 8:
+                    break;
+                case 9:
+                    dbCollection = databaseObj.getCollection("Logs");
+                    document = new BasicDBObject();
+
+
+                    break;
+
                 default:
                     throw new IllegalStateException("Unexpected value: " + commandType);
             }
@@ -149,25 +155,22 @@ public class Database {
         return true;
     }
 
-    public static void main(String[] args) {
-        //    getInstance().unitToServer(new JSONObject());
-        System.out.println(getInstance().createNewHouse(new JSONObject()));
-
-    }
-
+    //PUT/COMMAND.docx
     private JSONObject changeState(JSONObject fromServer) {
 
         try {
-            JSONObject json = new JSONObject();
             JSONObject jsonToStoreInDB = new JSONObject();
+/*
+            JSONObject json = new JSONObject();
 
             json.put("token", "123455");
             json.put("requestType", "changeLight");
             json.put("userId", "1");
-            json.put("deviceId", "1234");
+            json.put("deviceId", "1202");
             json.put("command", 0);
             fromServer = json;
-            commandLog(fromServer, 2);
+
+*/
             String deviceId = fromServer.getString("deviceId");
             try {
                 String houseId = deviceId.substring(0, 1);
@@ -238,17 +241,17 @@ public class Database {
 
     } //Unit o server (command protocol)
 
-
-    private JSONObject addAccessToServer(JSONObject fromServer) {
+    //PUT/ADD ACCESS TO HOUSE.docx
+    private JSONObject addAccessToHouse(JSONObject fromServer) {
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
         JSONObject testJson = new JSONObject();
         try {
 
-            testJson.put("userName", "Bole");
+            testJson.put("username", "Isak");
             testJson.put("token", "12345555");
-            testJson.put("houseId", 1);
-            testJson.put("housePassword", "abc");
+            testJson.put("houseID", 1);
+            testJson.put("housePassword", "123");
 
 
             fromServer = testJson;
@@ -256,8 +259,8 @@ public class Database {
 
 
             dbCollection = databaseObj.getCollection("House");
-
-            document.put("houseID", fromServer.getString("houseID"));
+            document = new BasicDBObject();
+            document.put("houseID", fromServer.getInt("houseID"));
 
             cursor = dbCollection.find(document);
 
@@ -270,9 +273,14 @@ public class Database {
 
                 if (fetchedObject.get("housePassword").equals(fromServer.getString("housePassword"))) {
 
-                    BasicDBList list = (BasicDBList) fetchedObject.get("houseAdmins");
+                    BasicDBList list = (BasicDBList) fetchedObject.get("usernames");
+                    list.add(fromServer.getString("username"));
 
-
+                    query = new BasicDBObject();
+                    query.append("$set", new BasicDBObject().append("usernames", list));
+                    BasicDBObject search = new BasicDBObject().append("houseID", fromServer.getInt("houseID"));
+                    dbCollection.update(search, query);
+                    System.out.println("User added and username added to list");
                     successJson.put("result", 1);
                     return successJson;
 
@@ -288,17 +296,74 @@ public class Database {
         return successJson;
     }
 
+    //PUT/Login.docx
+    public JSONObject loginMethod(JSONObject jsonObject) {
+
+        String jsonString = jsonObject.toString();
+/*
+        JSONObject json = new JSONObject();
+        try {
+            json.put("username", "IsakZ");
+            json.put("password", "123");
+            json.put("requestType", "LoginMethod");
+
+            jsonString = json.toString();
+            jsonObject = json;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+*/
+        dbCollection = databaseObj.getCollection("User");
+        document = new BasicDBObject();
+        gson = new Gson();
+        User user = gson.fromJson(jsonString, User.class);
+        document.put("username", user.getusername());
+        document.put("password", user.getPassword());
+        System.out.println(user.getusername());
+        System.out.println(user.getPassword());
+        cursor = dbCollection.find(document);
+        //            dbCollection.insert(BasicDBObject.parse(String.valueOf(toAdd)));
+
+
+        int result = -1;
+        while (cursor.hasNext()) {
+            fetchedObject = cursor.next();
+            if (fetchedObject.toString().contains(user.getusername())) {
+                if (fetchedObject.toString().contains(user.getPassword())) {
+                    result = 1;
+                    return createResponse(jsonObject, result);
+                } else {
+                    result = 0;
+
+                    return createResponse(jsonObject, result);
+
+                }
+            } else {
+                result = 0;
+                createResponse(jsonObject, result);
+
+
+                return createResponse(jsonObject, result);
+            }
+        }
+        result = 0;
+
+        return createResponse(jsonObject, result);
+
+    }
+
+
     private boolean doesEntityExist(String id, String entity, JSONObject jsonString) {
         document = new BasicDBObject();
-
+        int idInt = Integer.valueOf(id);
         switch (entity) {
             case "House":
                 dbCollection = databaseObj.getCollection(entity);
-                document.put("id", id);
+                document.put("houseID", idInt);
                 cursor = dbCollection.find(document);
                 if (!cursor.hasNext()) {
-                    //Device not found. Lets add it
-                    System.out.println("House not found, lets add it");
+                    System.out.println("House not found");
                     return false;
 
                 } else {
@@ -307,7 +372,7 @@ public class Database {
                 }
             case "Room":
                 dbCollection = databaseObj.getCollection(entity);
-                document.put("roomId", id);
+                document.put("roomID", idInt);
                 cursor = dbCollection.find(document);
                 if (!cursor.hasNext()) {
                     System.out.println("Room not found");
@@ -320,7 +385,7 @@ public class Database {
 
             case "Device":
                 dbCollection = databaseObj.getCollection(entity);
-                document.put("deviceId", id);
+                document.put("deviceID", idInt);
                 cursor = dbCollection.find(document);
 
                 if (!cursor.hasNext()) {
@@ -337,6 +402,7 @@ public class Database {
 
     }
 
+    //Används inte
     private DBObject addSomethingMethod(JSONObject fromServer, String entity) {
         dbCollection = databaseObj.getCollection(entity);
         JSONObject toAdd = new JSONObject();
@@ -388,6 +454,7 @@ public class Database {
 
     }
 
+    //POST/create device.docx
     private JSONObject createNewDevice(JSONObject fromServer) {
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -396,9 +463,9 @@ public class Database {
         try {
             int actualDeviceId;
             int nextDeviceId;
-            testJson.put("userName", "Bole");
+            testJson.put("username", "Bole");
             testJson.put("token", "1234555");
-            testJson.put("roomID", 12);
+            testJson.put("roomID", 22);
             testJson.put("deviceName", "Outdoor lamp");
             testJson.put("type", "Lamp");
             testJson.put("status", 0);
@@ -447,7 +514,7 @@ public class Database {
 
     }
 
-
+    // POST/create house.docx
     private JSONObject createNewHouse(JSONObject fromServer) {
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -455,9 +522,9 @@ public class Database {
 
 
         try {
-            testJson.put("houseName", "bajs");
+            testJson.put("houseName", "tredjehuset");
             testJson.put("housePassword", "123");
-            testJson.put("userName", "Bole");
+            testJson.put("username", "Bole");
             fromServer = testJson;
 
             dbCollection = databaseObj.getCollection("House");
@@ -466,7 +533,7 @@ public class Database {
             cursor = dbCollection.find(document);
             if (cursor.hasNext()) {
                 failJson.put("result", 0);
-                failJson.put("houseID", fromServer.getString("userName"));
+                failJson.put("houseID", fromServer.getString("username"));
                 System.out.println("HouseName already in use");
                 int nextHouseId = getAllHouses().length();
                 System.out.println(nextHouseId);
@@ -475,11 +542,13 @@ public class Database {
             }
             int nextHouseId = getAllHouses().length() + 1;
             System.out.println(nextHouseId);
+            BasicDBList list = new BasicDBList();
+            list.add(fromServer.getString("username"));
             query = new BasicDBObject();
             query.put("houseName", fromServer.getString("houseName"));
             query.put("housePassword", fromServer.getString("housePassword"));
             query.put("roomList", new BasicDBList());
-            query.put("userName", new BasicDBList().add(fromServer.getString("userName")));
+            query.put("usernames", list);
             query.put("houseID", nextHouseId);
             dbCollection.insert(query);
             commandLog(fromServer, 4);
@@ -496,21 +565,22 @@ public class Database {
         return null;
     }
 
+    //POST/CREATEROOM.docx
     private JSONObject createNewRoom(JSONObject fromServer) {
         JSONObject succesJson = new JSONObject();
         JSONObject failJson = new JSONObject();
         JSONObject testJson = new JSONObject();
         try {
 
-            testJson.put("userName", "Bole");
+            testJson.put("username", "Bole");
             testJson.put("token", "12345");
-            testJson.put("houseID", "1");
+            testJson.put("houseID", 1);
             testJson.put("roomName", "Kitchen");
             fromServer = testJson;
 
             dbCollection = databaseObj.getCollection("House");
             document = new BasicDBObject();
-            document.put("houseID", fromServer.getString("houseID"));
+            document.put("houseID", fromServer.getInt("houseID"));
 
             cursor = dbCollection.find(document);
 
@@ -525,14 +595,12 @@ public class Database {
             BasicDBList myArr = (BasicDBList) fetchedObject.get("roomList");
             int houseIdAfterMulti = Integer.valueOf(fetchedObject.get("houseID").toString()) * 10; //to simply add the roomnumber to get the roomID
             int newRoomNumber = getAllRoomsInHouseCount(fetchedObject.get("houseID").toString()).length() + 1;
-            System.out.println(myArr + "  hämtade listan");
             myArr.add(String.valueOf(newRoomNumber + houseIdAfterMulti));
-            System.out.println(myArr + " Listan efter add");
             if (addRoomToDb(fromServer, newRoomNumber + houseIdAfterMulti)) {
                 dbCollection = databaseObj.getCollection("House");
                 query = new BasicDBObject();
                 query.append("$set", new BasicDBObject().append("roomList", myArr));
-                BasicDBObject search = new BasicDBObject().append("houseID", String.valueOf(houseIdAfterMulti / 10));
+                BasicDBObject search = new BasicDBObject().append("houseID", houseIdAfterMulti / 10);
                 dbCollection.update(search, query);
 
                 System.out.println("Updated in db ");
@@ -549,6 +617,79 @@ public class Database {
         return succesJson;
     }
 
+    //POST/Create user.docx
+    public JSONObject createUser(JSONObject jsonObject) {
+
+
+        JSONObject failJson = new JSONObject();
+        JSONObject successJson = new JSONObject();
+        try {
+        /*    JSONObject filipTest = new JSONObject();
+            filipTest.put("firstName", "Filip");
+            filipTest.put("lastName", "BenkanssonjAO");
+            filipTest.put("password", "123456");
+            filipTest.put("username", "Benksaa33");
+            filipTest.put("requestType", "create-user");
+            filipTest.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
+            filipTest.put("email", "sm@asd.com");
+            filipTest.put("token", "123ad");
+            jsonObject = filipTest;  //"den som kommer från server"
+*/
+            dbCollection = databaseObj.getCollection("User");
+            gson = new Gson();
+            User user = gson.fromJson(jsonObject.toString(), User.class);
+            String userEmail = user.getEmail();
+            String username = user.getusername();
+
+            document = new BasicDBObject();
+            document.put("email", userEmail);
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+                fetchedObject = cursor.next();
+                if (fetchedObject.toString().contains(userEmail)) {
+                    failJson.put("result", 0);
+                    failJson.put("requestType", jsonObject.getString("requestType"));
+                    failJson.put("token", jsonObject.getString("token"));
+                    return failJson;
+                } else if (fetchedObject.toString().contains(username)) {
+
+                    failJson.put("result", 0);
+                    failJson.put("requestType", jsonObject.getString("requestType"));
+                    failJson.put("token", jsonObject.getString("token"));
+                    return failJson;
+                } else if (fetchedObject.get("password").toString().length() < 3 || fetchedObject.get("password") == null) {
+                    failJson.put("result", 0);
+                    failJson.put("requestType", jsonObject.getString("requestType"));
+                    failJson.put("token", jsonObject.getString("token"));
+                    return failJson;
+
+                }
+                commandLog(failJson, 4);
+
+            }
+
+            query = new BasicDBObject();
+            query.put("firstName", user.getFirstName());
+            query.put("lastName", user.getLastName());
+            query.put("password", user.getPassword());
+            query.put("username", user.getusername());
+            query.put("userId", user.getUserId());
+            query.put("email", user.getEmail());
+
+            dbCollection.insert(query);
+
+            successJson.put("token", jsonObject.getString("token"));
+            successJson.put("requestType", jsonObject.getString("requestType"));
+            successJson.put("result", 1);
+            return successJson;
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+
+    }
+
     private boolean addRoomToDb(JSONObject fromServer, int newRoomNumber) {
 
         try {
@@ -557,10 +698,10 @@ public class Database {
             dbCollection = databaseObj.getCollection("Room");
 
             document = new BasicDBObject();
-
+            document.put("roomID", newRoomNumber);
             cursor = dbCollection.find(document);
             if (cursor.hasNext()) {
-                System.out.println("roomnumber already in database. Some logical error xD");
+                System.out.println("roomnumber already in database. someone messed up ");
                 return false;
                 //HouseIDERROR
             }
@@ -570,6 +711,7 @@ public class Database {
             document.put("roomID", newRoomNumber);
             document.put("deviceList", list);
             document.put("roomName", fromServer.getString("roomName"));
+            document.put("houseID", fromServer.getInt("houseID"));
             System.out.println("added in Room Document");
             dbCollection.insert(document);
             return true;
@@ -581,20 +723,37 @@ public class Database {
     }
 
     private JSONArray getAllRoomsInHouseCount(String houseID) {
-        dbCollection = databaseObj.getCollection("House");
+        dbCollection = databaseObj.getCollection("Room");
         JSONArray arr = new JSONArray();
+        JSONObject json = new JSONObject();
         document = new BasicDBObject();
-        document.put("houseID", houseID);
+        int houseIdInt = Integer.valueOf(houseID);
+        document.put("houseID", houseIdInt);
+
         cursor = dbCollection.find(document);
+        arr.put(0);
         while (cursor.hasNext()) {
+            try {
+                json = new JSONObject();
+                fetchedObject = cursor.next();
 
-            BasicDBList dbList = (BasicDBList) cursor.next().get("roomList");
-            for (Object s : dbList) {
-                arr.put(s);
+                json.put("roomName", fetchedObject.get("roomName"));
+                json.put("roomID", fetchedObject.get("roomID"));
 
+                arr.put(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
         }
-        System.out.println(arr.toString() + "toString xD ");
+     /*   BasicDBList dbList = (BasicDBList) cursor.next().get("roomList");
+        for (Object s : dbList) {
+            arr.put(s);
+
+        }
+
+      */
+
         return arr;
     }
 
@@ -610,6 +769,104 @@ public class Database {
         }
         System.out.println(arr.toString());
         return arr;
+    }
+
+    //GET/Get houses.docx
+    private JSONArray getAllHousesForUser(JSONObject fromServer) {
+        dbCollection = databaseObj.getCollection("House");
+        JSONObject json = new JSONObject();
+        JSONObject temp = new JSONObject();
+        JSONArray arr = new JSONArray();
+
+        try {
+            temp.put("username", "Bole");
+            temp.put("token", "1234");
+            fromServer = temp;
+            document = new BasicDBObject();
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+                json = new JSONObject();
+                fetchedObject = cursor.next();
+                BasicDBList list = (BasicDBList) fetchedObject.get("usernames");
+                for (Object e : list) {
+                    String s = e.toString();
+                    if (s.equals(fromServer.getString("username"))) {
+
+                        System.out.println("Found user in a house list");
+                        json.put("houseName", fetchedObject.get("houseName"));
+                        json.put("houseID", fetchedObject.get("houseID"));
+                        arr.put(json);
+
+                    }
+
+                }
+
+            }
+            return arr;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return arr;
+    }
+
+    //GET/HOUSE.docx
+    private JSONObject getHouse(JSONObject fromServer) {
+        JSONObject jsonTest = new JSONObject();
+        JSONObject jsonSuccess = new JSONObject();
+        JSONObject jsonFail = new JSONObject();
+        JSONArray array = new JSONArray();
+        try {
+            jsonTest.put("username", "Bole");
+            jsonTest.put("token", "12355");
+            jsonTest.put("houseID", 1);
+            fromServer = jsonTest;
+
+            array = getAllRoomsInHouseCount(String.valueOf(fromServer.getInt("houseID")));
+            System.out.println(array.toString());
+            JSONArray arr = new JSONArray();
+            for (int i = 1; i < array.length(); i++) {
+                JSONObject dbObj = (JSONObject) array.get(i);
+                System.out.println(dbObj.toString());
+                JSONObject json; //=  (JSONObject) dbObj.get("room");
+                json = new JSONObject();
+                json.put("roomName", dbObj.getString("roomName"));
+                json.put("roomID", dbObj.getString("roomID"));
+
+
+                arr.put(json);
+
+                jsonSuccess.put("roomList", arr);
+
+
+            }
+
+
+            dbCollection = databaseObj.getCollection("House");
+            document = new BasicDBObject();
+
+            document.put("houseID", fromServer.getInt("houseID"));
+            cursor = dbCollection.find(document);
+
+
+            if (!cursor.hasNext()) {
+                jsonFail.put("result", 0);
+                jsonFail.put("houseID", fromServer.getInt("houseID"));
+                return jsonFail;
+
+            } else {
+                fetchedObject = cursor.next();
+                return jsonSuccess.put("houseName", fetchedObject.get("houseName"));
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void newRoom(String roomId) {
@@ -664,6 +921,7 @@ public class Database {
     }
 
 
+    //gammal
     public String getDeviceStatus(Object id) {
 
         dbCollection = databaseObj.getCollection("Device");
@@ -677,7 +935,7 @@ public class Database {
     }
 
     //TODO Gör klart json som ska skickas tillbaka
-    public JSONObject getAllDevicesInRoom(JSONObject fromServer) {
+    public JSONObject getRoom(JSONObject fromServer) {
         JSONObject jsonSuccess = new JSONObject();
         JSONObject jsonFail = new JSONObject();
         JSONObject jsonTest = new JSONObject();
@@ -685,7 +943,7 @@ public class Database {
         BasicDBList dbList = new BasicDBList();
         JSONObject temp = new JSONObject();
         try {
-            jsonTest.put("userName", "Bole");
+            jsonTest.put("username", "Bole");
             jsonTest.put("token", "12345");
             jsonTest.put("roomID", 12);
 
@@ -696,6 +954,7 @@ public class Database {
             cursor = dbCollection.find(document);
 
             while (cursor.hasNext()) {
+                temp = new JSONObject();
                 fetchedObject = cursor.next();
                 temp.put("deviceName", fetchedObject.get("deviceName"));
                 temp.put("deviceID", fetchedObject.get("deviceID"));
@@ -726,78 +985,6 @@ public class Database {
         return null;
     }
 
-
-    //Create user
-
-    public JSONObject createUser(JSONObject jsonObject) {
-        /*   JSONObject filipTest = new JSONObject();
-           filipTest.put("firstName", "Filip");
-           filipTest.put("lastName", "BenkanssonjAO");
-           filipTest.put("password", "123456");
-           filipTest.put("userName", "Benka33");
-           filipTest.put("userId", "5c37692c-360f-4022-a7db-23a45f828c1d");
-           filipTest.put("email", "sm@somethingmore.com");
-           jsonObject = filipTest.toString();  //"den som kommer från server"
-*/
-        JSONObject failJson = new JSONObject();
-        JSONObject successJson = new JSONObject();
-        try {
-
-
-            dbCollection = databaseObj.getCollection("User");
-            gson = new Gson();
-            User user = gson.fromJson(jsonObject.toString(), User.class);
-            String userEmail = user.getEmail();
-            String userName = user.getUserName();
-
-            document = new BasicDBObject();
-            document.put("email", userEmail);
-            cursor = dbCollection.find(document);
-
-            while (cursor.hasNext()) {
-                fetchedObject = cursor.next();
-                if (fetchedObject.toString().contains(userEmail)) {
-                    failJson.put("result", 0);
-                    failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
-                    return failJson;
-                } else if (fetchedObject.toString().contains(userName)) {
-
-                    failJson.put("result", 0);
-                    failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
-                    return failJson;
-                } else if (fetchedObject.get("password").toString().length() < 3 || fetchedObject.get("password") == null) {
-                    failJson.put("result", 0);
-                    failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
-                    return failJson;
-
-                }
-                commandLog(failJson, 4);
-
-            }
-
-            query = new BasicDBObject();
-            query.put("firstName", user.getFirstName());
-            query.put("lastName", user.getLastName());
-            query.put("password", user.getPassword());
-            query.put("userName", user.getUserName());
-            query.put("userId", user.getUserId());
-            query.put("email", user.getEmail());
-
-            dbCollection.insert(query);
-
-            successJson.put("token", jsonObject.getString("token"));
-            successJson.put("requestType", jsonObject.getString("requestType"));
-            successJson.put("result", 1);
-            return successJson;
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-
-    }
 
     //Find user
     public Object findUser(String id) {
@@ -863,53 +1050,13 @@ public class Database {
               return false;
           }
       }*/
-    public JSONObject loginMethod(JSONObject jsonObject) {
-
-        String jsonString = jsonObject.toString();
-
-        dbCollection = databaseObj.getCollection("User");
-        document = new BasicDBObject();
-        gson = new Gson();
-        User user = gson.fromJson(jsonString, User.class);
-        document.put("userName", user.getUserName());
-        document.put("password", user.getPassword());
-        System.out.println(user.getUserName());
-        System.out.println(user.getPassword());
-        cursor = dbCollection.find(document);
-        //            dbCollection.insert(BasicDBObject.parse(String.valueOf(toAdd)));
-
-
-        int result = -1;
-        while (cursor.hasNext()) {
-            fetchedObject = cursor.next();
-            if (fetchedObject.toString().contains(user.getUserName())) {
-                if (fetchedObject.toString().contains(user.getPassword())) {
-                    result = 1;
-                    return createResponse(jsonObject, result);
-                } else {
-                    result = 0;
-                    return createResponse(jsonObject, result);
-
-                }
-            } else {
-                result = 0;
-                createResponse(jsonObject, result);
-
-                return createResponse(jsonObject, result);
-            }
-        }
-        result = 0;
-
-        return createResponse(jsonObject, result);
-
-    }
 
     private JSONObject createResponse(JSONObject jsonString, int result) {
 
         JSONObject json = null;
         try {
             json = jsonString;
-            json.put("userName", json.get("userName"));
+            json.put("username", json.get("username"));
             json.put("requestType", json.get("requestType"));
             json.put("result", result);
             //Server will add token??

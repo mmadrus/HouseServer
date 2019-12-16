@@ -18,18 +18,23 @@ Use the correct port for your server.
 
 public class Database {
 
-    private static final String URL = "ec2-13-48-149-247.eu-north-1.compute.amazonaws.com";
+    private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
     private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
     private static final String PASSWORD = "serverisking";
     private static final String PORT_NUMBER = "27017";
     private static final String DATABASE = "smart_house";
-    int rommIdInt;
+
+    public static boolean isAuthenticated = false;
+    public static int result;
+    private static Database database = Database.getInstance();
+
+
+    private int rommIdInt;
 
 
     private Gson gson;
     private MongoClient mongoClient = null;
-    private static Database database = Database.getInstance();
     private DBCollection dbCollection;
     private BasicDBObject document, query;
     private DBCursor cursor;
@@ -45,8 +50,8 @@ public class Database {
     }
 
     private Database(String s) {
-        mongoClient = new MongoClient("localhost", 27017);
-        databaseObj = mongoClient.getDB("HouseDatabase");
+        mongoClient = new MongoClient("ec2-13-48-28-82.eu-north-1.compute.amazonaws.com", 27017);
+        databaseObj = mongoClient.getDB("smart_house");
 
     }
 
@@ -90,7 +95,7 @@ public class Database {
                     dbCollection = databaseObj.getCollection("DeviceLog");
                     document = new BasicDBObject();
 
-                    document.put("userId", jsonObject.getString("userId"));
+                    document.put("userID", jsonObject.getString("userID"));
                     document.put("command", jsonObject.getString("command"));
                     System.out.println("Device log added");
                     dbCollection.insert(document);
@@ -165,8 +170,8 @@ public class Database {
 
             json.put("token", "123455");
             json.put("requestType", "changeLight");
-            json.put("userId", "1");
-            json.put("deviceId", "1202");
+            json.put("userID", "1");
+            json.put("deviceId", "1234");
             json.put("command", 0);
             fromServer = json;
 
@@ -988,7 +993,7 @@ public class Database {
         dbCollection = databaseObj.getCollection("user");
 
         document = new BasicDBObject();
-        document.put("userId", id);
+        document.put("userID", id);
         cursor = dbCollection.find(document);
 
         if (!cursor.hasNext()) {

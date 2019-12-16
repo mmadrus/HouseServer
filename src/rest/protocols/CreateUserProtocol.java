@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -24,7 +25,7 @@ public class CreateUserProtocol {
         newUser.put("password", protocolString.getString("password"));
         newUser.put("userId", id);
 
-        String dbResponse = Database.getInstance().createUser(newUser.toString());
+        JSONObject dbResponse = Database.getInstance().createUser(newUser);
 
         JSONObject serverReply = new JSONObject();
         serverReply.put("token", id);

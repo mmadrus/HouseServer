@@ -201,7 +201,7 @@ public class Database {
             jsonToStoreInDB.put("deviceId", deviceId);
             jsonToStoreInDB.put("command", fromServer.getString("command"));
 
-            dbCollection = databaseObj.getCollection("Device");
+            dbCollection = databaseObj.getCollection("Devices");
             document = new BasicDBObject();
             document.put("id", deviceId);
             cursor = dbCollection.find(document);
@@ -491,7 +491,7 @@ public class Database {
                 //removing some parts of the json
                 fromServer.remove("token");
                 fromServer.put("deviceID", actualDeviceId);
-                dbCollection = databaseObj.getCollection("Device");
+                dbCollection = databaseObj.getCollection("Devices");
                 System.out.println("Device added");
 
                 dbCollection.insert(BasicDBObject.parse(fromServer.toString()));
@@ -650,18 +650,15 @@ public class Database {
                 if (fetchedObject.toString().contains(userEmail)) {
                     failJson.put("result", 0);
                     failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
                     return failJson;
                 } else if (fetchedObject.toString().contains(username)) {
 
                     failJson.put("result", 0);
                     failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
                     return failJson;
                 } else if (fetchedObject.get("password").toString().length() < 3 || fetchedObject.get("password") == null) {
                     failJson.put("result", 0);
                     failJson.put("requestType", jsonObject.getString("requestType"));
-                    failJson.put("token", jsonObject.getString("token"));
                     return failJson;
 
                 }
@@ -924,7 +921,7 @@ public class Database {
     //gammal
     public String getDeviceStatus(Object id) {
 
-        dbCollection = databaseObj.getCollection("Device");
+        dbCollection = databaseObj.getCollection("Devices");
         document = new BasicDBObject();
         document.put("id", "1234");
         cursor = dbCollection.find(document);
@@ -949,7 +946,7 @@ public class Database {
 
             fromServer = jsonTest;
 
-            dbCollection = databaseObj.getCollection("Device");
+            dbCollection = databaseObj.getCollection("Devices");
             document = new BasicDBObject().append("roomID", fromServer.getInt("roomID"));
             cursor = dbCollection.find(document);
 

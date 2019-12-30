@@ -325,9 +325,9 @@ public class Database {
         document = new BasicDBObject();
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
-        document.put("username", user.getusername());
+        document.put("username", user.getUsername());
         document.put("password", user.getPassword());
-        System.out.println(user.getusername());
+        System.out.println(user.getUsername());
         System.out.println(user.getPassword());
         cursor = dbCollection.find(document);
         //            dbCollection.insert(BasicDBObject.parse(String.valueOf(toAdd)));
@@ -336,7 +336,7 @@ public class Database {
         int result = -1;
         while (cursor.hasNext()) {
             fetchedObject = cursor.next();
-            if (fetchedObject.toString().contains(user.getusername())) {
+            if (fetchedObject.toString().contains(user.getUsername())) {
                 if (fetchedObject.toString().contains(user.getPassword())) {
                     result = 1;
                     return createResponse(jsonObject, result);
@@ -507,7 +507,7 @@ public class Database {
                 return successJson.put("result", 1).put("deviceID", actualDeviceId);
             } else {
                 System.out.println("Room not found");
-                return failJson.put("result", 0).put("deviceID", null);
+                return failJson.put("result", 0).put("deviceID", (Collection<?>) null);
 
             }
 
@@ -646,7 +646,7 @@ public class Database {
             gson = new Gson();
             User user = gson.fromJson(jsonObject.toString(), User.class);
             String userEmail = user.getEmail();
-            String username = user.getusername();
+            String username = user.getUsername();
 
             document = new BasicDBObject();
             document.put("email", userEmail);

@@ -321,7 +321,7 @@ public class Database {
         }
 
 */
-        dbCollection = databaseObj.getCollection("User");
+        dbCollection = databaseObj.getCollection("user");
         document = new BasicDBObject();
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
@@ -642,7 +642,7 @@ public class Database {
             filipTest.put("token", "123ad");
             jsonObject = filipTest;  //"den som kommer från server"
 */
-            dbCollection = databaseObj.getCollection("User");
+            dbCollection = databaseObj.getCollection("user");
             gson = new Gson();
             User user = gson.fromJson(jsonObject.toString(), User.class);
             String userEmail = user.getEmail();

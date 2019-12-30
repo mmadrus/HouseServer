@@ -19,10 +19,10 @@ import javax.ws.rs.core.Response;
 @Path("/authenticate")
 public class LoginService {
 
-    AuthenticationHandler authService;
-    Database database;
+    private AuthenticationHandler authService;
+    private Database database;
 
-    LoginProtocol loginProtocol = new LoginProtocol();
+    private LoginProtocol loginProtocol = new LoginProtocol();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

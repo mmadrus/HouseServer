@@ -190,8 +190,8 @@ public class Database {
                 String houseId = deviceId.substring(0, 1);
                 String roomId = deviceId.substring(0, 2);
                 System.out.println(roomId);
-                boolean houseExist = doesEntityExist(houseId, "houses", fromServer);
-                boolean roomExist = doesEntityExist(roomId, "rooms", fromServer);
+                boolean houseExist = doesEntityExist(houseId, "house", fromServer);
+                boolean roomExist = doesEntityExist(roomId, "room", fromServer);
 
                 if (!houseExist || !roomExist) {
                     //Returna error pga hus eller rum inte finns

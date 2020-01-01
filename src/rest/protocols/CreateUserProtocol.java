@@ -12,26 +12,20 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 import rest.database.Database;
+import rest.models.Token;
 
 public class CreateUserProtocol {
 
-    public JSONObject setProtocolString (JSONObject protocolString) throws JSONException {
-        JSONObject newUser = new JSONObject();
+    public JSONObject setProtocolString (JSONObject newUser) throws JSONException {
+
         String id = UUID.randomUUID().toString();
-        newUser.put("username", protocolString.getString("username"));
-        newUser.put("email", protocolString.getString("email"));
-        newUser.put("firstName", protocolString.getString("firstName"));
-        newUser.put("lastName", protocolString.getString("lastName"));
-        newUser.put("password", protocolString.getString("password"));
         newUser.put("userId", id);
 
         JSONObject dbResponse = Database.getInstance().createUser(newUser);
+        Token token = new Token();
+        dbResponse.put("token", token.getToken());
+        TokenProtocol.getInstance().addToken(token);
 
-        JSONObject serverReply = new JSONObject();
-        serverReply.put("token", id);
-        serverReply.put("request-type", "create-user");
-        serverReply.put("result", dbResponse);
-
-        return serverReply;
+        return dbResponse;
     }
 }

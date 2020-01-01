@@ -1,4 +1,4 @@
-package rest.Cryption;
+package rest.cryption;
 
 
 import java.security.MessageDigest;

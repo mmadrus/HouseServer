@@ -8,20 +8,18 @@ import java.util.UUID;
 
 public class LoginProtocol {
 
-    public JSONObject setProtocolString (JSONObject protocolString) throws JSONException {
-        JSONObject authenticateUser = new JSONObject();
-        String id = UUID.randomUUID().toString();
-        authenticateUser.put("username", protocolString.getString("username"));
-        authenticateUser.put("password", protocolString.getString("password"));
+    public JSONObject setProtocolString (JSONObject user) throws JSONException {
 
+        if (TokenProtocol.getInstance().isAlive(user.getString("token"))) {
+            JSONObject dbResponse = Database.getInstance().loginMethod(user);
+            dbResponse.put("token", user.getString("token"));
+            dbResponse.put("username", user.getString("username"));
 
-        JSONObject dbResponse = Database.getInstance().loginMethod(authenticateUser);
+            return dbResponse;
 
-        JSONObject serverReply = new JSONObject();
-        serverReply.put("token", id);
-        serverReply.put("request-type", "authenticate-user");
-        serverReply.put("result", dbResponse);
+        }
 
-        return serverReply;
+        return new JSONObject().put("result", 0).put("token", user.getString("token"))
+                                .put("username", user.getString("username")).put("basj", "bajs");
     }
 }

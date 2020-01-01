@@ -1,11 +1,8 @@
 package rest;
 
-import rest.resource.CommandResource;
-import rest.resource.DeviceResource;
-import rest.resource.HardwareSocket;
-import rest.resource.ServerTestClass;
-import rest.service.CreateUserService;
-import rest.service.LoginService;
+import org.glassfish.grizzly.http.server.HttpServer;
+import rest.resource.*;
+import rest.resource.LoginResource;
 import rest.service.StartPageService;
 
 import javax.ws.rs.ApplicationPath;
@@ -22,10 +19,11 @@ public class Main extends Application {
         h.add(HardwareSocket.class);
         h.add(StartPageService.class);
         h.add(CommandResource.class);
-        h.add(LoginService.class);
+        h.add(LoginResource.class);
         h.add(ServerTestClass.class);
-        h.add(CreateUserService.class);
+        h.add(CreateUserResource.class);
         h.add(DeviceResource.class);
+        h.add(HouseResource.class);
 
         return h;
     }

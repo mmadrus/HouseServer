@@ -8,6 +8,21 @@ public class TokenProtocol {
 
     private ArrayList<Token> validTokens = new ArrayList<>();
 
+    private static TokenProtocol tokenProtocol = null;
+
+    private TokenProtocol () {}
+
+    public static TokenProtocol getInstance () {
+
+        if (tokenProtocol == null) {
+
+            tokenProtocol = new TokenProtocol();
+        }
+
+        return tokenProtocol;
+    }
+
+
     public boolean isAlive (String tokenString) {
 
         /*for (Token token: validTokens) {
@@ -18,7 +33,7 @@ public class TokenProtocol {
             }
         }*/
 
-        if (tokenString.equals("1234")) {
+        if (tokenString.equals("501dd60098c34007bb220853fc4e134b")) {
 
             return true;
         }
@@ -26,11 +41,11 @@ public class TokenProtocol {
         return false;
     }
 
-    public boolean createToken () {
+    public boolean addToken (Token token) {
 
         try {
 
-            validTokens.add(new Token());
+            validTokens.add(token);
 
             return true;
 

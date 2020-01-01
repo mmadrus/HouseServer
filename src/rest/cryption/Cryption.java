@@ -1,14 +1,10 @@
-package rest.Cryption;
+package rest.cryption;
 
 
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 
 public class Cryption {

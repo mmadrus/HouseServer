@@ -1,5 +1,7 @@
 package rest.resource;
 
+import rest.protocols.HardwareMessageProtocol;
+
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -13,6 +15,7 @@ public class HardwareSocket {
     private Session session;
     private static Set<HardwareSocket> serverEndpoints = new CopyOnWriteArraySet<>();
     private static LinkedList<Session> clients = new LinkedList<>();
+    private HardwareMessageProtocol hardwareMessageProtocol = new HardwareMessageProtocol();
 
     @OnOpen
     public void onOpen (Session s) {
@@ -27,8 +30,10 @@ public class HardwareSocket {
             throws IOException {
 
         try {
-            broadcast("ok");
-        } catch (EncodeException e) {
+
+            System.out.println(message);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

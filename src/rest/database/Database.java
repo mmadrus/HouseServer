@@ -215,23 +215,32 @@ public class Database {
         }
     }
 
+    public JSONObject changeDeviceState (JSONObject object) {
+
+        try {
+
+            dbCollection = databaseObj.getCollection("devices");
+            document = new BasicDBObject();
+            document.append("$set", new BasicDBObject().append("status", object.getInt("command")));
+
+            BasicDBObject search = new BasicDBObject().append("deviceID", object.getInt("deviceID"));
+
+            dbCollection.update(search, document);
+            return new JSONObject().put("result", 1);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", 0);
+        }
+    }
 
     //PUT/COMMAND.docx
     private JSONObject changeState(JSONObject fromServer) {
 
         try {
             JSONObject jsonToStoreInDB = new JSONObject();
-/*
-            JSONObject json = new JSONObject();
 
-            json.put("token", "123455");
-            json.put("requestType", "changeLight");
-            json.put("userID", "1");
-            json.put("deviceId", "1234");
-            json.put("command", 0);
-            fromServer = json;
-
-*/
             String deviceId = fromServer.getString("deviceId");
             try {
                 String houseId = deviceId.substring(0, 1);
@@ -791,40 +800,6 @@ public class Database {
 
         return allUsers;
     }
-
-
-    public JSONArray getUpdatedDevices () {
-
-         JSONArray jsonArray = new JSONArray();
-         JSONObject jsonObject = new JSONObject();
-
-         try {
-
-             dbCollection = databaseObj.getCollection("devices");
-
-             document = new BasicDBObject();
-             cursor = dbCollection.find(document);
-
-             while (cursor.hasNext()) {
-                 fetchedObject = cursor.next();
-                 jsonObject = JSONProtocol.getInstance().toJson(fetchedObject.toString());
-                 if (jsonObject.getBoolean("flag")) {
-                     jsonObject.remove("_id");
-                     jsonArray.put(jsonObject);
-                 }
-
-             }
-
-             return jsonArray;
-
-         } catch (Exception e) {
-
-             e.printStackTrace();
-         }
-
-         return jsonArray;
-    }
-
 
     public JSONArray getDevices () {
 

@@ -16,6 +16,7 @@ public class Main extends Application {
     @Override
     public Set<Class<?>> getClasses () {
         HashSet h = new HashSet<Class<?>>();
+        h.add(AdminResource.class);
         h.add(HardwareSocket.class);
         h.add(StartPageService.class);
         h.add(CommandResource.class);

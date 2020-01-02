@@ -14,13 +14,11 @@ public class CommandResource {
 
     private CommandProtocol commandProtocol = new CommandProtocol();
 
-
     @PUT
     @Path("/command")
     public Response userRequest (String jsonString) {
 
-       JSONObject jsonObject = JSONProtocol.getInstance().toJson(jsonString);
-        Database.getInstance().commandLog(jsonObject);
+        JSONObject jsonObject = JSONProtocol.getInstance().toJson(jsonString);
         JSONObject obj = commandProtocol.protocolCheck(jsonObject);
 
         return Response.ok(obj.toString()).header("Access-Control-Allow-Origin", "*").build();

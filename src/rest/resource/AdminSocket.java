@@ -1,7 +1,6 @@
 package rest.resource;
 
 import org.json.JSONObject;
-import rest.protocols.HardwareMessageProtocol;
 import rest.utils.Stats;
 
 import javax.websocket.*;
@@ -11,13 +10,12 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value="/sockets/arduino")
-public class HardwareSocket {
+@ServerEndpoint(value="/sockets/admin")
+public class AdminSocket {
 
     private Session session;
-    private static Set<HardwareSocket> serverEndpoints = new CopyOnWriteArraySet<>();
+    private static Set<AdminSocket> serverEndpoints = new CopyOnWriteArraySet<>();
     private static LinkedList<Session> clients = new LinkedList<>();
-    private HardwareMessageProtocol hardwareMessageProtocol = new HardwareMessageProtocol();
 
     @OnOpen
     public void onOpen (Session s) {
@@ -25,8 +23,6 @@ public class HardwareSocket {
         this.session = s;
         serverEndpoints.add(this);
         clients.add(s);
-        Stats.getInstance().setHardwareOnline(true);
-        Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
     }
 
     @OnMessage
@@ -35,7 +31,24 @@ public class HardwareSocket {
 
         try {
 
-            hardwareMessageProtocol.decodeMessage(message);
+            int adminCommand = Integer.parseInt(message);
+
+            switch (adminCommand) {
+
+                case 1:
+
+                    sendAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+                    break;
+
+                case 2:
+
+                    sendAdmin(new JSONObject().put("serverOnline", true).toString());
+                    break;
+
+                default:
+
+                    break;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,11 +61,9 @@ public class HardwareSocket {
     public void onClose(Session session) throws IOException {
 
         serverEndpoints.remove(this);
-        Stats.getInstance().setHardwareOnline(false);
-        Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
     }
 
-    public static void broadcast(String message)
+    public static void sendAdmin(String message)
             throws IOException, EncodeException {
 
         serverEndpoints.forEach(endpoint -> {

@@ -21,7 +21,7 @@ public class CommandResource {
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(jsonString);
         JSONObject obj = commandProtocol.protocolCheck(jsonObject);
 
-        return Response.ok(obj.toString()).header("Access-Control-Allow-Origin", "*").build();
+        return Response.ok(obj.toString()).build();
     }
 
 }

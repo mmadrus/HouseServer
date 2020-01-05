@@ -22,9 +22,6 @@ public class CreateUserProtocol {
         newUser.put("userId", id);
 
         JSONObject dbResponse = Database.getInstance().createUser(newUser);
-        Token token = new Token();
-        dbResponse.put("token", token.getToken());
-        TokenProtocol.getInstance().addToken(token);
 
         return dbResponse;
     }

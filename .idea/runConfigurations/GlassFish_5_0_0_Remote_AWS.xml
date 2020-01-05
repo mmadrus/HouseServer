@@ -3,6 +3,7 @@
     <option name="HOST" value="ec2-13-48-28-82.eu-north-1.compute.amazonaws.com" />
     <option name="LOCAL" value="false" />
     <option name="OPEN_IN_BROWSER" value="false" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://ec2-13-48-28-82.eu-north-1.compute.amazonaws.com:9475/HouseServer_war_exploded/" />
     <option name="UPDATING_POLICY" value="hot-swap-classes" />
     <deployment>
       <artifact name="HouseServer:war exploded">

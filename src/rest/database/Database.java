@@ -950,7 +950,7 @@ public class Database {
 
                 arrayObj = new JSONObject();
                 arrayObj.put("houseName", tempArrayObj.getString("houseName"));
-                arrayObj.append("houseID", tempArrayObj.get("houseID"));
+                arrayObj.put("houseID", tempArrayObj.get("houseID"));
 
                 jsonArray.put(arrayObj);
             }
@@ -1011,7 +1011,7 @@ public class Database {
 
                 arrayObj = new JSONObject();
                 arrayObj.put("roomName", tempArrayObj.getString("roomName"));
-                arrayObj.append("roomID", tempArrayObj.getInt("roomID"));
+                arrayObj.put("roomID", tempArrayObj.getInt("roomID"));
 
                 jsonArray.put(arrayObj);
             }
@@ -1075,7 +1075,7 @@ public class Database {
 
                 arrayObj = new JSONObject();
                 arrayObj.put("deviceName", tempArrayObj.getString("deviceName"));
-                arrayObj.append("deviceID", tempArrayObj.getInt("deviceID"));
+                arrayObj.put("deviceID", tempArrayObj.getInt("deviceID"));
 
                 jsonArray.put(arrayObj);
             }

@@ -1,7 +1,6 @@
 package rest.service;
 
 import com.fazecast.jSerialComm.SerialPort;
-import org.ardulink.util.ByteArray;
 import org.json.JSONObject;
 
 import java.io.*;

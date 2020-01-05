@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
+import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -412,8 +413,8 @@ public class Database {
         document = new BasicDBObject();
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
-        document.put("username", jsonObject.getString("username"));
-        document.put("password", jsonObject.getString("password"));
+        document.put("username", JSON.parse(jsonObject.getString("username")));
+        document.put("password", JSON.parse(jsonObject.getString("password")));
 
         cursor = dbCollection.find(document);
 

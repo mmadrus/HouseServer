@@ -34,7 +34,6 @@ public class TokenProtocol {
         }*/
 
         if (tokenString.equals("501dd60098c34007bb220853fc4e134b")) {
-
             return true;
         }
 

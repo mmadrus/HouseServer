@@ -21,6 +21,7 @@ public class Cryption {
     private static String salt = "ssshhhhhhhhhhh!!!!";
 
 
+
     public static String cryption(String strToCrypt, int mode) {
         String string = "";
 

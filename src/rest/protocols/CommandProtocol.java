@@ -13,17 +13,17 @@ public class CommandProtocol {
         JSONObject returnObject = new JSONObject();
 
         returnObject.put("token", jsonObject.getString("token"));
-        returnObject.put("deviceId", jsonObject.getString("deviceId"));
+        returnObject.put("deviceID", jsonObject.getInt("deviceID"));
 
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
             try {
 
-                String id = String.valueOf(jsonObject.getInt("deviceId"));
+                String id = String.valueOf(jsonObject.getInt("deviceID"));
                 String command = String.valueOf(jsonObject.getInt("command"));
                 System.out.println(id + command);
                 HardwareSocket.broadcast(id + command);
-                JSONObject temp = Database.getInstance().changeDeviceState(jsonObject);
+                JSONObject temp = Database.getInstance().updateDeviceStatus(jsonObject);
                 returnObject.put("result", temp.getInt("result"));
 
             } catch (Exception e) {

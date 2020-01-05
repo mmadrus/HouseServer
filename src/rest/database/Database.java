@@ -15,8 +15,13 @@ import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import rest.cryption.Cryption;
+import rest.models.Token;
 import rest.models.User;
 import rest.protocols.JSONProtocol;
+import rest.protocols.TokenProtocol;
+
+import static rest.cryption.Cryption.cryption;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -28,6 +33,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 
 */
 
+@SuppressWarnings("DuplicatedCode")
 public class Database {
 
     private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
@@ -56,8 +62,8 @@ public class Database {
 
 
 
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
     }
 
     private Database() {
@@ -92,7 +98,7 @@ public class Database {
         dbCollection = databaseObj.getCollection("devices");
 
         document = new BasicDBObject();
-        document.put("deviceID", "1101");
+        document.put("deviceID", 1101);
         document.put("status", 0);
         document.put("deviceName", "Indoor Lamp");
         document.put("type", "Device");
@@ -100,7 +106,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1102");
+        document.put("deviceID", 1102);
         document.put("status", 0);
         document.put("deviceName", "Outdoor Lamp");
         document.put("type", "Device");
@@ -108,7 +114,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "11053");
+        document.put("deviceID", 11053);
         document.put("fahrenheit", 0);
         document.put("celsius", 0);
         document.put("deviceName", "Indoor Temp");
@@ -117,7 +123,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "11063");
+        document.put("deviceID", 11063);
         document.put("fahrenheit", 0);
         document.put("celsius", 0);
         document.put("deviceName", "Outdoor Temp");
@@ -126,7 +132,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1109");
+        document.put("deviceID", 1109);
         document.put("status", 0);
         document.put("deviceName", "Water Leakage");
         document.put("type", "Alarm");
@@ -134,7 +140,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1112");
+        document.put("deviceID", 1112);
         document.put("status", 0);
         document.put("deviceName", "Stove");
         document.put("type", "Alarm");
@@ -142,7 +148,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1108");
+        document.put("deviceID", 1108);
         document.put("status", 0);
         document.put("deviceName", "Fire Alarm");
         document.put("type", "Alarm");
@@ -150,7 +156,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1111");
+        document.put("deviceID", 1111);
         document.put("status", 0);
         document.put("deviceName", "Window");
         document.put("type", "Alarm");
@@ -158,7 +164,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1103");
+        document.put("deviceID", 1103);
         document.put("status", 0);
         document.put("deviceName", "Radiator");
         document.put("type", "Device");
@@ -166,7 +172,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1104");
+        document.put("deviceID", 1104);
         document.put("status", 0);
         document.put("deviceName", "Fan");
         document.put("type", "Device");
@@ -174,7 +180,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "11073");
+        document.put("deviceID", 11073);
         document.put("status", "");
         document.put("deviceName", "Electric Consumption");
         document.put("type", "Sensor");
@@ -182,7 +188,7 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1113");
+        document.put("deviceID", 1113);
         document.put("status", 0);
         document.put("deviceName", "Power Cut");
         document.put("type", "Alarm");
@@ -190,12 +196,48 @@ public class Database {
         dbCollection.insert(document);
 
         document = new BasicDBObject();
-        document.put("deviceID", "1110");
+        document.put("deviceID", 1110);
         document.put("status", 0);
         document.put("deviceName", "Break-in Alarm");
         document.put("type", "Alarm");
         document.put("flag", false);
         dbCollection.insert(document);
+
+        dbCollection = databaseObj.getCollection("rooms");
+        document = new BasicDBObject();
+        document.put("roomID", 11);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()) {
+
+            fetchedObject = cursor.next();
+
+            BasicDBList dbList = (BasicDBList) fetchedObject.get("deviceList");
+
+            if (dbList.size() <= 0) {
+                dbList.add(1101);
+                dbList.add(1102);
+                dbList.add(11053);
+                dbList.add(11063);
+                dbList.add(1109);
+                dbList.add(1112);
+                dbList.add(1108);
+                dbList.add(1111);
+                dbList.add(1103);
+                dbList.add(1104);
+                dbList.add(11073);
+                dbList.add(1113);
+                dbList.add(1110);
+            }
+
+            //updating roomList before changing collection
+            query = new BasicDBObject();
+
+            BasicDBObject search = new BasicDBObject().append("roomID", 11);
+
+            query.append("$set", new BasicDBObject().append("deviceList", dbList));
+            dbCollection.update(search, query);
+        }
     }
 
     public void commandLog(JSONObject jsonObject) {
@@ -206,7 +248,7 @@ public class Database {
         try {
 
             document.put("Date", new Date());
-            document.put("User-command", jsonObject);
+            document.put("User-command", jsonObject.toString());
             dbCollection.insert(document);
 
 
@@ -215,7 +257,7 @@ public class Database {
         }
     }
 
-    public JSONObject changeDeviceState (JSONObject object) {
+    /*public JSONObject changeDeviceState (JSONObject object) {
 
         try {
 
@@ -233,7 +275,7 @@ public class Database {
             e.printStackTrace();
             return new JSONObject().put("result", 0);
         }
-    }
+    }*/
 
     //PUT/COMMAND.docx
     private JSONObject changeState(JSONObject fromServer) {
@@ -241,7 +283,7 @@ public class Database {
         try {
             JSONObject jsonToStoreInDB = new JSONObject();
 
-            String deviceId = fromServer.getString("deviceId");
+            String deviceId = fromServer.getString("deviceID");
             try {
                 String houseId = deviceId.substring(0, 1);
                 String roomId = deviceId.substring(0, 2);
@@ -268,36 +310,31 @@ public class Database {
 
 
             System.out.println(deviceId);
-            jsonToStoreInDB.put("deviceId", deviceId);
+            jsonToStoreInDB.put("deviceID", deviceId);
             jsonToStoreInDB.put("command", fromServer.getString("command"));
 
-            dbCollection = databaseObj.getCollection("Devices");
+            dbCollection = databaseObj.getCollection("devices");
             document = new BasicDBObject();
-            document.put("id", deviceId);
+            document.put("deviceID", deviceId);
             cursor = dbCollection.find(document);
-            if (!cursor.hasNext()) {
-                //Device not found. Lets add it
+            while (cursor.hasNext()) {
+
                 if (!doesEntityExist(deviceId, "devices", jsonToStoreInDB)) {
                     JSONObject errorJson = new JSONObject();
 
-                    errorJson.put("requestType", fromServer.get("requestType"));
                     errorJson.put("deviceId", fromServer.getString("deviceId"));
                     errorJson.put("result", 0);
                     return errorJson;
                 }
 
-
-            } else {
-                fetchedObject = cursor.next();
-
             }
 
             query = new BasicDBObject();
-            query.append("$set", new BasicDBObject().append("state", fromServer.getInt("command")));
-            BasicDBObject search = new BasicDBObject().append("deviceId", deviceId);
+            query.append("$set", new BasicDBObject().append("status", fromServer.getInt("command")));
+            BasicDBObject search = new BasicDBObject().append("deviceID", deviceId);
             dbCollection.update(search, query);
+
             JSONObject successJson = new JSONObject();
-            successJson.put("requestType", fromServer.getInt("command"));
             successJson.put("deviceId", fromServer.getString("deviceId"));
             successJson.put("result", 1);
 
@@ -380,19 +417,23 @@ public class Database {
 
         cursor = dbCollection.find(document);
 
+        String temp = "";
+
         while (cursor.hasNext()) {
 
             fetchedObject = cursor.next();
-            if (fetchedObject.toString().contains(user.getUsername())) {
-                if (fetchedObject.toString().contains(user.getPassword())) {
-                    return new JSONObject().put("result", 1);
+            if (fetchedObject.get("username").equals(user.getUsername())) {
+                temp = (String) fetchedObject.get("password");
+                if (temp.equals(user.getPassword())) {
+                    Token token = new Token();
+                    TokenProtocol.getInstance().addToken(token);
+                    return new JSONObject().put("result", 1).put("token", token.getToken());
                 }
             }
         }
 
         return new JSONObject().put("result", 0);
     }
-
 
     private boolean doesEntityExist(String id, String entity, JSONObject jsonString) {
         document = new BasicDBObject();
@@ -480,7 +521,7 @@ public class Database {
                 //removing some parts of the json
                 fromServer.remove("token");
                 fromServer.put("deviceID", actualDeviceId);
-                dbCollection = databaseObj.getCollection("device");
+                dbCollection = databaseObj.getCollection("devices");
                 System.out.println("Device added");
 
                 dbCollection.insert(BasicDBObject.parse(fromServer.toString()));
@@ -533,7 +574,6 @@ public class Database {
             dbCollection.insert(query);
 
             addHouseToUser(fromServer, nextHouseId);
-            //commandLog(fromServer, 4);
 
             successJson.put("result", 1);
             successJson.put("houseID", nextHouseId);
@@ -653,6 +693,8 @@ public class Database {
 
                 }
             }
+
+            //String temp = cryption(user.getPassword(), 1);
 
             BasicDBList list = new BasicDBList();
 
@@ -840,12 +882,15 @@ public class Database {
             dbCollection = databaseObj.getCollection("users");
 
             document = new BasicDBObject();
+            document.put("username", jsonObject.getString("username"));
             cursor = dbCollection.find(document);
+            JSONObject temp = new JSONObject();
 
             while (cursor.hasNext()) {
 
                 fetchedObject = cursor.next();
-                if (fetchedObject.get("username").equals(jsonObject.getString("username"))) {
+                temp = JSONProtocol.getInstance().toJson(fetchedObject.toString());
+                if (temp.getString("username").equals(jsonObject.getString("username"))) {
 
                     BasicDBList list = (BasicDBList) fetchedObject.get("houseList");
                     list.add(houseId);
@@ -1007,7 +1052,7 @@ public class Database {
             finalObject.put("roomID", object.getInt("roomID"));
 
             BasicDBList list = (BasicDBList) fetchedObject.get("deviceList");
-            DBCollection tempCollection = databaseObj.getCollection("device");
+            DBCollection tempCollection = databaseObj.getCollection("devices");
             Cursor tempC = null;
             DBObject tempFetched = null;
             int tempInt;
@@ -1155,7 +1200,7 @@ public class Database {
 
         try {
 
-            dbCollection = databaseObj.getCollection("device");
+            dbCollection = databaseObj.getCollection("devices");
 
             cursor = dbCollection.find();
             int id;
@@ -1181,6 +1226,77 @@ public class Database {
         }
     }
 
+    public JSONObject updateDeviceStatus (JSONObject jsonObject) {
 
+        try {
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            document = new BasicDBObject();
+            //document.put("deviceID", jsonObject.getInt("deviceID"));
+            cursor = dbCollection.find(document);
+            JSONObject temp = new JSONObject();
+
+            while (cursor.hasNext()) {
+
+                fetchedObject = cursor.next();
+                System.out.println(fetchedObject.get("deviceID"));
+                System.out.println(jsonObject.getInt("deviceID"));
+                temp = JSONProtocol.getInstance().toJson(fetchedObject.toString());
+
+                if (temp.getInt("deviceID") == jsonObject.getInt("deviceID")) {
+
+                    query = new BasicDBObject();
+                    query.append("$set", new BasicDBObject().append("status", jsonObject.getInt("command")));
+                    BasicDBObject search = new BasicDBObject().append("deviceID", jsonObject.getInt("deviceID"));
+                    dbCollection.update(search, query);
+
+                    return new JSONObject().put("result", 1);
+                }
+            }
+
+            return new JSONObject().put("result", 0);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", 0);
+        }
+    }
+
+    public JSONObject updateTempDevice (JSONObject jsonObject) {
+
+        try {
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            document = new BasicDBObject();
+            document.put("deviceID", jsonObject.getInt("deviceID"));
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+
+                fetchedObject = cursor.next();
+
+                if (fetchedObject.get("deviceID").equals(jsonObject.getInt("deviceID"))) {
+
+                    query = new BasicDBObject();
+                    query.append("$set", new BasicDBObject().append("celsius", jsonObject.getInt("celsius")));
+                    query.append("$set", new BasicDBObject().append("fahrenheit", jsonObject.getInt("fahrenheit")));
+                    BasicDBObject search = new BasicDBObject().append("deviceID", jsonObject.getInt("deviceID"));
+                    dbCollection.update(search, query);
+
+                    return new JSONObject().put("result", 1);
+                }
+            }
+
+            return new JSONObject().put("result", 0);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", 0);
+        }
+    }
 
 }

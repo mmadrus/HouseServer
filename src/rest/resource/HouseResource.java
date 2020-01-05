@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@SuppressWarnings("DuplicatedCode")
 @Path("service/house")
 public class HouseResource {
 
@@ -35,8 +36,8 @@ public class HouseResource {
         return Response.ok(object.toString()).build();
     }
 
-    @Path("/room")
     @GET
+    @Path("/room")
     public Response getRooms (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
@@ -54,8 +55,8 @@ public class HouseResource {
         return Response.ok(object.toString()).build();
     }
 
-    @Path("/room/device")
     @GET
+    @Path("/room/device")
     public Response getDevices (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);

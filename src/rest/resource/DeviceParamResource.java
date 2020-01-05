@@ -3,25 +3,24 @@ package rest.resource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.database.Database;
-import rest.protocols.JSONProtocol;
 import rest.protocols.TokenProtocol;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @SuppressWarnings("DuplicatedCode")
-@Path("service/update")
-public class DeviceResource {
+@Path("service/param/update")
+@Consumes (MediaType.TEXT_PLAIN)
+@Produces(MediaType.TEXT_PLAIN)
+public class DeviceParamResource {
 
     @GET
-    @Path("/device")
-    public Response getUpdates (String json) {
+    @Path("/device/{username}/{token}/{roomID}")
+    public Response getDeviceUpdate (@PathParam("username") String username, @PathParam("token") String token,
+                                     @PathParam("roomID") int roomID) {
 
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
+        JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
         Database.getInstance().commandLog(jsonObject);
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
@@ -34,32 +33,15 @@ public class DeviceResource {
         }
 
         return Response.ok(jsonArray.toString()).build();
+
     }
 
     @GET
-    @Path("/sensor")
-    public Response getSensors (String json) {
+    @Path("/alarm/{username}/{token}/{houseID}")
+    public Response getAlarmUpdate (@PathParam("username") String username, @PathParam("token") String token,
+                                     @PathParam("houseID") int houseID) {
 
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
-        JSONArray jsonArray = null;
-        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
-
-            jsonArray = Database.getInstance().getSensorUpdate();
-
-        } else {
-
-            jsonArray = new JSONArray().put(new JSONObject().put("result", 0));
-        }
-
-        return Response.ok(jsonArray.toString()).build();
-    }
-
-    @GET
-    @Path("/alarm")
-    public Response getAlarms (String json) {
-
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
+        JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
         Database.getInstance().commandLog(jsonObject);
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
@@ -72,15 +54,27 @@ public class DeviceResource {
         }
 
         return Response.ok(jsonArray.toString()).build();
+
     }
 
     @GET
-    @Path("/newinstance")
-    public Response getCurrentStatus (String json) {
+    @Path("/sensor/{username}/{token}/{houseID}")
+    public Response getSensorUpdate (@PathParam("username") String username, @PathParam("token") String token,
+                                    @PathParam("houseID") int houseID) {
 
-        JSONArray jsonArray = Database.getInstance().getDevices();
+        JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
+        Database.getInstance().commandLog(jsonObject);
+        JSONArray jsonArray = null;
+        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
+
+            jsonArray = Database.getInstance().getSensorUpdate();
+
+        } else {
+
+            jsonArray = new JSONArray().put(new JSONObject().put("result", 0));
+        }
 
         return Response.ok(jsonArray.toString()).build();
-    }
 
+    }
 }

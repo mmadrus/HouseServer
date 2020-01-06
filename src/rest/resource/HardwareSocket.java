@@ -26,7 +26,8 @@ public class HardwareSocket {
         serverEndpoints.add(this);
         clients.add(s);
         Stats.getInstance().setHardwareOnline(true);
-        Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+        //Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+        //getSensors();
     }
 
     @OnMessage
@@ -36,6 +37,7 @@ public class HardwareSocket {
         try {
 
             hardwareMessageProtocol.decodeMessage(message);
+            System.out.println("MESSAGE: " + message);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,7 +51,7 @@ public class HardwareSocket {
 
         serverEndpoints.remove(this);
         Stats.getInstance().setHardwareOnline(false);
-        Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+        //Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
     }
 
     public static void broadcast(String message)
@@ -65,5 +67,31 @@ public class HardwareSocket {
                 }
             }
         });
+    }
+
+    private void getSensors () {
+
+        try {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        broadcast("11053");
+                        Thread.sleep(20000);
+                        broadcast("11063");
+                        Thread.sleep(20000);
+                        broadcast("11073");
+                        Thread.sleep(20000);
+                    } catch (IOException | EncodeException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }

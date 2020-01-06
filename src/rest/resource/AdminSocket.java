@@ -37,12 +37,12 @@ public class AdminSocket {
 
                 case 1:
 
-                    sendAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+                    //sendAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
                     break;
 
                 case 2:
 
-                    sendAdmin(new JSONObject().put("serverOnline", true).toString());
+                    //sendAdmin(new JSONObject().put("serverOnline", true).toString());
                     break;
 
                 default:

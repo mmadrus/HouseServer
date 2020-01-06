@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 public class HouseParamResource {
 
     @GET
-    @Path("/room/device/{username}/{token}/{roomID}")
+    @Path("/room/{username}/{token}/{roomID}")
     public Response getRoomDevices (@PathParam("username") String username, @PathParam("token") String token,
                                     @PathParam("roomID") int roomID) {
 
@@ -32,11 +32,11 @@ public class HouseParamResource {
             object = new JSONObject().put("result", "fail");
         }
 
-        return Response.ok(object.toString()).build();
+        return Response.ok(object.toString(1)).build();
     }
 
     @GET
-    @Path("/room/{username}/{token}/{houseID}")
+    @Path("/{username}/{token}/{houseID}")
     public Response getHouseRooms (@PathParam("username") String username, @PathParam("token") String token,
                                    @PathParam("houseID") int houseID) {
 
@@ -52,7 +52,7 @@ public class HouseParamResource {
             object = new JSONObject().put("result", "fail");
         }
 
-        return Response.ok(object.toString()).build();
+        return Response.ok(object.toString(1)).build();
     }
 
     @GET
@@ -72,6 +72,6 @@ public class HouseParamResource {
             object = new JSONArray().put(new JSONObject().put("result", 0));
         }
 
-        return Response.ok(object.toString()).build();
+        return Response.ok(object.toString(1)).build();
     }
 }

@@ -37,7 +37,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 */
 
 @SuppressWarnings("DuplicatedCode")
-public class Database {
+public class Database  {
 
     private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
@@ -124,6 +124,7 @@ public class Database {
         document.put("deviceID", 11053);
         document.put("fahrenheit", 0);
         document.put("celsius", 0);
+        document.put("status", 0);
         document.put("deviceName", "Indoor Temp");
         document.put("type", "Sensor");
         document.put("flag", false);
@@ -133,6 +134,7 @@ public class Database {
         document.put("deviceID", 11063);
         document.put("fahrenheit", 0);
         document.put("celsius", 0);
+        document.put("status", 0);
         document.put("deviceName", "Outdoor Temp");
         document.put("type", "Sensor");
         document.put("flag", false);
@@ -188,7 +190,7 @@ public class Database {
 
         document = new BasicDBObject();
         document.put("deviceID", 11073);
-        document.put("status", "");
+        document.put("status", 0);
         document.put("deviceName", "Electric Consumption");
         document.put("type", "Sensor");
         document.put("flag", false);
@@ -259,7 +261,7 @@ public class Database {
             dbCollection.insert(document);
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -356,7 +358,7 @@ public class Database {
     } //Unit o server (command protocol)
 
     //PUT/ADD ACCESS TO HOUSE.docx
-    public JSONObject addAccessToHouse(JSONObject fromServer) {
+    public JSONObject addAccessToHouse(JSONObject fromServer) throws JSONException {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -377,6 +379,7 @@ public class Database {
             } else {
 
                 fetchedObject = cursor.next();
+                JSONObject house = JSONProtocol.getInstance().toJson(fetchedObject.toString());
 
                 if (fetchedObject.get("housePassword").equals(fromServer.getString("housePassword"))) {
 
@@ -388,7 +391,7 @@ public class Database {
                     BasicDBObject search = new BasicDBObject().append("houseID", fromServer.getInt("houseID"));
                     dbCollection.update(search, query);
 
-                    addHouseToUser(fromServer, fromServer.getInt("houseID"));
+                    addHouseToUser(house.put("username", fromServer.getString("username")), fromServer.getInt("houseID"));
 
                     successJson.put("result", 1);
                     return successJson;
@@ -411,7 +414,7 @@ public class Database {
     }
 
     //PUT/Login.docx
-    public JSONObject loginMethod(JSONObject jsonObject) {
+    public JSONObject loginMethod(JSONObject jsonObject) throws JSONException {
 
         String jsonString = jsonObject.toString();
 
@@ -491,7 +494,7 @@ public class Database {
     }
 
     //POST/create device.docx
-    public JSONObject createNewDevice(JSONObject fromServer) {
+    public JSONObject createNewDevice(JSONObject fromServer) throws JSONException {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -544,7 +547,7 @@ public class Database {
             }
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return failJson.put("result", 0).put("deviceID", 0);
         }
@@ -552,7 +555,7 @@ public class Database {
     }
 
     // POST/create house.docx
-    public JSONObject createNewHouse(JSONObject fromServer) {
+    public JSONObject createNewHouse(JSONObject fromServer) throws JSONException {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -588,7 +591,7 @@ public class Database {
             return successJson;
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
             failJson.put("database", "fail");
@@ -598,7 +601,7 @@ public class Database {
     }
 
     //POST/CREATEROOM.docx
-    public JSONObject createNewRoom (JSONObject fromServer) {
+    public JSONObject createNewRoom (JSONObject fromServer) throws JSONException {
 
         JSONObject succesJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -649,7 +652,7 @@ public class Database {
 
             return succesJson;
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             failJson.put("result", 0);
             return failJson;
@@ -658,7 +661,7 @@ public class Database {
     }
 
     //POST/Create user.docx
-    public JSONObject createUser(JSONObject jsonObject) {
+    public JSONObject createUser(JSONObject jsonObject) throws JSONException {
 
 
         JSONObject failJson = new JSONObject();
@@ -720,7 +723,7 @@ public class Database {
 
             return successJson;
 
-        } catch (JSONException ex) {
+        } catch (Exception ex) {
 
             ex.printStackTrace();
             return new JSONObject().put("result", 0);
@@ -795,7 +798,7 @@ public class Database {
         return arr;
     }
 
-    private JSONArray getAllHouses() {
+    private JSONArray getAllHouses() throws JSONException {
 
         dbCollection = databaseObj.getCollection("houses");
         JSONArray arr = new JSONArray();
@@ -892,6 +895,7 @@ public class Database {
             document.put("username", jsonObject.getString("username"));
             cursor = dbCollection.find(document);
             JSONObject temp = new JSONObject();
+            String hID = String.valueOf(houseId);
 
             while (cursor.hasNext()) {
 
@@ -900,7 +904,7 @@ public class Database {
                 if (temp.getString("username").equals(jsonObject.getString("username"))) {
 
                     BasicDBList list = (BasicDBList) fetchedObject.get("houseList");
-                    list.add(String.valueOf(houseId) + ":" + jsonObject.getString("houseName"));
+                    list.add(hID + ":" + jsonObject.getString("houseName"));
 
                     query = new BasicDBObject();
                     query.append("$set", new BasicDBObject().append("houseList", list));
@@ -916,7 +920,7 @@ public class Database {
         }
     }
 
-    public JSONObject getSpecificHouse (JSONObject jsonObject) {
+    public JSONObject getSpecificHouse (JSONObject jsonObject) throws JSONException {
 
         try {
 
@@ -988,7 +992,7 @@ public class Database {
         }
     }
 
-    public JSONObject getSpecificHousesRoom (JSONObject object) {
+    public JSONObject getSpecificHousesRoom (JSONObject object) throws JSONException {
         try {
 
             dbCollection = databaseObj.getCollection("houses");
@@ -1051,7 +1055,7 @@ public class Database {
         }
     }
 
-    public JSONArray getUserHouses (JSONObject object) {
+    public JSONArray getUserHouses (JSONObject object) throws JSONException {
 
         try {
 
@@ -1114,7 +1118,7 @@ public class Database {
         }
     }
 
-    public JSONObject getHouseRooms (JSONObject object) {
+    public JSONObject getHouseRooms (JSONObject object) throws JSONException {
 
         try {
 
@@ -1181,7 +1185,7 @@ public class Database {
 
     }
 
-    public JSONObject getRoomDevices (JSONObject object) {
+    public JSONObject getRoomDevices (JSONObject object) throws JSONException {
 
         try {
 
@@ -1222,20 +1226,24 @@ public class Database {
 
                 tempC = tempCollection.find(tempObj);
 
-                tempFetched = tempC.next();
+                try {
 
-                tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
+                    tempFetched = tempC.next();
+
+                    tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
+
+                    arrayObj = new JSONObject();
+                    arrayObj.put("deviceName", tempArrayObj.getString("deviceName"));
+                    arrayObj.put("deviceID", tempArrayObj.getInt("deviceID"));
+                    arrayObj.put("status", tempArrayObj.getInt("status"));
+                    arrayObj.put("type", tempArrayObj.getString("type"));
 
 
-                arrayObj = new JSONObject();
-                System.out.println("WWWWWWWWTTTTTTFFFFFFFFF" + tempArrayObj.toString(1));
-                arrayObj.put("deviceName", tempArrayObj.getString("deviceName"));
-                arrayObj.put("deviceID", tempArrayObj.getInt("deviceID"));
-                arrayObj.put("status", tempArrayObj.getInt("status"));
-                arrayObj.put("type", tempArrayObj.getString("type"));
+                    jsonArray.put(arrayObj);
 
-
-                jsonArray.put(arrayObj);
+                } catch (NoSuchElementException exe) {
+                    exe.getSuppressed();
+                }
             }
 
             finalObject.put("listOfDevices", jsonArray);
@@ -1250,7 +1258,7 @@ public class Database {
 
     }
 
-    public JSONArray getDeviceUpdate () {
+    public JSONArray getDeviceUpdate () throws JSONException {
 
         try {
 
@@ -1284,7 +1292,7 @@ public class Database {
         }
     }
 
-    public JSONArray getAlarmUpdate () {
+    public JSONArray getAlarmUpdate () throws JSONException {
 
         try {
 
@@ -1318,7 +1326,7 @@ public class Database {
         }
     }
 
-    public JSONArray getSensorUpdate () {
+    public JSONArray getSensorUpdate () throws JSONException {
 
         try {
 
@@ -1354,7 +1362,7 @@ public class Database {
         }
     }
 
-    public JSONObject deleteDevice (JSONObject jsonObject) {
+    public JSONObject deleteDevice (JSONObject jsonObject) throws JSONException {
 
         try {
 
@@ -1362,14 +1370,13 @@ public class Database {
 
             cursor = dbCollection.find();
             int id;
-            String temp = "";
+            int temp;
 
             while (cursor.hasNext()) {
 
                 fetchedObject = cursor.next();
-                temp = (String) fetchedObject.get("deviceID");
-                id = Integer.parseInt(temp);
-                if (id == jsonObject.getInt("deviceID")) {
+                temp = (int) fetchedObject.get("deviceID");
+                if (temp == jsonObject.getInt("deviceID")) {
                     dbCollection.remove(fetchedObject);
                     break;
 
@@ -1384,7 +1391,7 @@ public class Database {
         }
     }
 
-    public JSONObject updateDeviceStatus (JSONObject jsonObject) {
+    public JSONObject updateDeviceStatus (JSONObject jsonObject) throws JSONException {
 
         try {
 
@@ -1422,7 +1429,7 @@ public class Database {
         }
     }
 
-    public JSONObject updateTempDevice (JSONObject jsonObject) {
+    public JSONObject updateTempDevice (JSONObject jsonObject) throws JSONException {
 
         try {
 

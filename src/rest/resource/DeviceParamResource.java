@@ -1,6 +1,7 @@
 package rest.resource;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 import rest.protocols.TokenProtocol;
@@ -18,7 +19,7 @@ public class DeviceParamResource {
     @GET
     @Path("/device/{username}/{token}/{roomID}")
     public Response getDeviceUpdate (@PathParam("username") String username, @PathParam("token") String token,
-                                     @PathParam("roomID") int roomID) {
+                                     @PathParam("roomID") int roomID) throws JSONException {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
         Database.getInstance().commandLog(jsonObject);
@@ -39,7 +40,7 @@ public class DeviceParamResource {
     @GET
     @Path("/alarm/{username}/{token}/{houseID}")
     public Response getAlarmUpdate (@PathParam("username") String username, @PathParam("token") String token,
-                                     @PathParam("houseID") int houseID) {
+                                     @PathParam("houseID") int houseID) throws JSONException {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
         Database.getInstance().commandLog(jsonObject);
@@ -60,7 +61,7 @@ public class DeviceParamResource {
     @GET
     @Path("/sensor/{username}/{token}/{houseID}")
     public Response getSensorUpdate (@PathParam("username") String username, @PathParam("token") String token,
-                                    @PathParam("houseID") int houseID) {
+                                    @PathParam("houseID") int houseID) throws JSONException {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
         Database.getInstance().commandLog(jsonObject);
@@ -76,5 +77,25 @@ public class DeviceParamResource {
 
         return Response.ok(jsonArray.toString()).build();
 
+    }
+
+    @DELETE
+    @Path("/delete/{username}/{token}/{deviceID}")
+    public Response deleteDevice (@PathParam("deviceID") int deviceID, @PathParam("token") String token,
+                                  @PathParam("username") String username) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject().put("deviceID", deviceID).put("token", token).put("username", username);
+        Database.getInstance().commandLog(jsonObject);
+        JSONObject jsonArray = null;
+        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
+
+            jsonArray = Database.getInstance().deleteDevice(jsonObject);
+
+        } else {
+
+            jsonArray = new JSONObject().put("result", 0);
+        }
+
+        return Response.ok(jsonArray.toString()).build();
     }
 }

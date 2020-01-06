@@ -1,5 +1,6 @@
 package rest.resource;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 import rest.protocols.CommandProtocol;
@@ -16,7 +17,7 @@ public class CommandResource {
 
     @PUT
     @Path("/command")
-    public Response userRequest (String jsonString) {
+    public Response userRequest (String jsonString) throws JSONException {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(jsonString);
         JSONObject obj = commandProtocol.protocolCheck(jsonObject);

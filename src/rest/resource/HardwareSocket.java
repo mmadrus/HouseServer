@@ -18,6 +18,7 @@ public class HardwareSocket {
     private static Set<HardwareSocket> serverEndpoints = new CopyOnWriteArraySet<>();
     private static LinkedList<Session> clients = new LinkedList<>();
     private HardwareMessageProtocol hardwareMessageProtocol = new HardwareMessageProtocol();
+    private boolean exists = false;
 
     @OnOpen
     public void onOpen (Session s) {
@@ -36,7 +37,7 @@ public class HardwareSocket {
 
         try {
 
-            //hardwareMessageProtocol.decodeMessage(message);
+            hardwareMessageProtocol.decodeMessage(message);
             System.out.println("MESSAGE: " + message);
 
         } catch (Exception e) {
@@ -62,7 +63,7 @@ public class HardwareSocket {
                 try {
                     endpoint.session.getBasicRemote().
                             sendObject(message);
-                } catch (IOException | EncodeException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

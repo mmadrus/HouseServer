@@ -1,23 +1,30 @@
 package rest.resource;
 
-import org.json.JSONException;
+
 import org.json.JSONObject;
 import rest.database.Database;
 import rest.protocols.JSONProtocol;
 import rest.protocols.TokenProtocol;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("service/web/house")
+@Consumes(MediaType.TEXT_PLAIN)
+@Produces(MediaType.TEXT_PLAIN)
 public class HouseWebHouse {
+
+    @GET
+    public Response test () {
+
+        return Response.ok("WTF").build();
+    }
 
     @GET
     @Path("/{username}/{token}/{houseName}")
     public Response getHouses (@PathParam("username") String username, @PathParam("token") String token,
-                               @PathParam("houseName") String housename) throws JSONException {
+                               @PathParam("houseName") String housename) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseName", housename.replace("-", " "));
         Database.getInstance().commandLog(jsonObject);
@@ -37,7 +44,7 @@ public class HouseWebHouse {
     @GET
     @Path("/room/{username}/{token}/{roomID}")
     public Response getRooms (@PathParam("username") String username, @PathParam("token") String token,
-                              @PathParam("roomID") int roomID) throws JSONException {
+                              @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
         Database.getInstance().commandLog(jsonObject);

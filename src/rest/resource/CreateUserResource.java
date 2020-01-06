@@ -1,7 +1,6 @@
 package rest.resource;
 
 import com.google.gson.JsonObject;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
@@ -21,7 +20,7 @@ public class CreateUserResource {
 
     @Path("/create")
     @POST
-    public Response newUser(String json) throws JSONException {
+    public Response newUser(String json) {
 
 
         // newUser is the JSON that has the information from the client and should be sent to the

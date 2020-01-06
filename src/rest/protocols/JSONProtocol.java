@@ -1,6 +1,5 @@
 package rest.protocols;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -20,7 +19,7 @@ public class JSONProtocol {
         return jsonProtocol;
     }
 
-    public JSONObject toJson (String jsonString) throws JSONException {
+    public JSONObject toJson (String jsonString) {
 
         return new JSONObject(new JSONTokener(jsonString));
     }

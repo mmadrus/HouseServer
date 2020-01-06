@@ -1,12 +1,11 @@
 package rest.protocols;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 
 public class HardwareMessageProtocol {
 
-    public void decodeMessage (String msg) throws JSONException {
+    public void decodeMessage (String msg) {
 
         int command;
         int id;

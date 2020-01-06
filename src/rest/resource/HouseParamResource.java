@@ -1,7 +1,6 @@
 package rest.resource;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 import rest.protocols.TokenProtocol;
@@ -19,7 +18,7 @@ public class HouseParamResource {
     @GET
     @Path("/room/{username}/{token}/{roomID}")
     public Response getRoomDevices (@PathParam("username") String username, @PathParam("token") String token,
-                                    @PathParam("roomID") int roomID) throws JSONException {
+                                    @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
         Database.getInstance().commandLog(jsonObject);
@@ -39,7 +38,7 @@ public class HouseParamResource {
     @GET
     @Path("/{username}/{token}/{houseID}")
     public Response getHouseRooms (@PathParam("username") String username, @PathParam("token") String token,
-                                   @PathParam("houseID") int houseID) throws JSONException {
+                                   @PathParam("houseID") int houseID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
         Database.getInstance().commandLog(jsonObject);
@@ -58,7 +57,7 @@ public class HouseParamResource {
 
     @GET
     @Path("/{username}/{token}")
-    public Response getUserHouses (@PathParam("username") String username, @PathParam("token") String token) throws JSONException {
+    public Response getUserHouses (@PathParam("username") String username, @PathParam("token") String token) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token);
         System.out.println(jsonObject.toString());
@@ -75,4 +74,6 @@ public class HouseParamResource {
 
         return Response.ok(object.toString(1)).build();
     }
+
+
 }

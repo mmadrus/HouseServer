@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 import com.google.gson.JsonObject;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
@@ -16,7 +15,7 @@ import rest.models.Token;
 
 public class CreateUserProtocol {
 
-    public JSONObject setProtocolString (JSONObject newUser) throws JSONException {
+    public JSONObject setProtocolString (JSONObject newUser) {
 
         String id = UUID.randomUUID().toString();
         newUser.put("userId", id);

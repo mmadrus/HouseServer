@@ -55,6 +55,9 @@
       <option name="BuildArtifacts" enabled="true">
         <artifact name="HouseServer:war exploded" />
       </option>
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="HouseServer:war exploded" />
+      </option>
     </method>
   </configuration>
 </component>

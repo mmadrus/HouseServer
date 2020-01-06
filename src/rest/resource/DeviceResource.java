@@ -1,7 +1,6 @@
 package rest.resource;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import rest.database.Database;
 import rest.protocols.JSONProtocol;
@@ -20,7 +19,7 @@ public class DeviceResource {
 
     @GET
     @Path("/device")
-    public Response getUpdates (String json) throws JSONException {
+    public Response getUpdates (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -39,18 +38,18 @@ public class DeviceResource {
 
     @GET
     @Path("/sensor")
-    public Response getSensors (String json) throws JSONException {
+    public Response getSensors (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
-        JSONArray jsonArray = null;
+        JSONObject jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
             jsonArray = Database.getInstance().getSensorUpdate();
 
         } else {
 
-            jsonArray = new JSONArray().put(new JSONObject().put("result", 0));
+            jsonArray = new JSONObject().put("result", 0);
         }
 
         return Response.ok(jsonArray.toString()).build();
@@ -58,7 +57,7 @@ public class DeviceResource {
 
     @GET
     @Path("/alarm")
-    public Response getAlarms (String json) throws JSONException {
+    public Response getAlarms (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);

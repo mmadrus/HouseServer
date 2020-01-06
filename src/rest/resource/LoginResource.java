@@ -2,7 +2,6 @@ package rest.resource;
 
 
 import org.glassfish.jersey.server.ResourceConfig;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import rest.database.Database;
@@ -25,7 +24,7 @@ public class LoginResource {
 
     @PUT
     @Path("/login")
-    public Response authenticateUser(String json) throws JSONException {
+    public Response authenticateUser(String json) {
 
         JSONObject authenticateUser = JSONProtocol.getInstance().toJson(json);
 

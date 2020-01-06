@@ -12,11 +12,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
-import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import rest.models.Token;
 import rest.models.User;
@@ -351,7 +349,7 @@ public class Database  {
             return successJson;
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -359,7 +357,7 @@ public class Database  {
     } //Unit o server (command protocol)
 
     //PUT/ADD ACCESS TO HOUSE.docx
-    public JSONObject addAccessToHouse(JSONObject fromServer) throws JSONException {
+    public JSONObject addAccessToHouse(JSONObject fromServer) {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -405,7 +403,7 @@ public class Database  {
             }
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
             failJson.put("result", 0);
@@ -415,7 +413,7 @@ public class Database  {
     }
 
     //PUT/Login.docx
-    public JSONObject loginMethod(JSONObject jsonObject) throws JSONException {
+    public JSONObject loginMethod(JSONObject jsonObject) {
 
         String jsonString = jsonObject.toString();
 
@@ -495,7 +493,7 @@ public class Database  {
     }
 
     //POST/create device.docx
-    public JSONObject createNewDevice(JSONObject fromServer) throws JSONException {
+    public JSONObject createNewDevice(JSONObject fromServer) {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -556,7 +554,7 @@ public class Database  {
     }
 
     // POST/create house.docx
-    public JSONObject createNewHouse(JSONObject fromServer) throws JSONException {
+    public JSONObject createNewHouse(JSONObject fromServer) {
 
         JSONObject successJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -602,7 +600,7 @@ public class Database  {
     }
 
     //POST/CREATEROOM.docx
-    public JSONObject createNewRoom (JSONObject fromServer) throws JSONException {
+    public JSONObject createNewRoom (JSONObject fromServer) {
 
         JSONObject succesJson = new JSONObject();
         JSONObject failJson = new JSONObject();
@@ -662,7 +660,7 @@ public class Database  {
     }
 
     //POST/Create user.docx
-    public JSONObject createUser(JSONObject jsonObject) throws JSONException {
+    public JSONObject createUser(JSONObject jsonObject) {
 
 
         JSONObject failJson = new JSONObject();
@@ -757,7 +755,7 @@ public class Database  {
             dbCollection.insert(document);
             return true;
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
             return false;
@@ -788,7 +786,7 @@ public class Database  {
 
                 arr.put(json);
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
 
                 e.printStackTrace();
                 return null;
@@ -799,7 +797,7 @@ public class Database  {
         return arr;
     }
 
-    private JSONArray getAllHouses() throws JSONException {
+    private JSONArray getAllHouses() {
 
         dbCollection = databaseObj.getCollection("houses");
         JSONArray arr = new JSONArray();
@@ -921,7 +919,7 @@ public class Database  {
         }
     }
 
-    public JSONObject getSpecificHouse (JSONObject jsonObject) throws JSONException {
+    public JSONObject getSpecificHouse (JSONObject jsonObject) {
 
         try {
 
@@ -993,7 +991,7 @@ public class Database  {
         }
     }
 
-    public JSONObject getSpecificHousesRoom (JSONObject object) throws JSONException {
+    public JSONObject getSpecificHousesRoom (JSONObject object) {
         try {
 
             dbCollection = databaseObj.getCollection("houses");
@@ -1056,7 +1054,7 @@ public class Database  {
         }
     }
 
-    public JSONArray getUserHouses (JSONObject object) throws JSONException {
+    public JSONArray getUserHouses (JSONObject object) {
 
         try {
 
@@ -1119,7 +1117,7 @@ public class Database  {
         }
     }
 
-    public JSONObject getHouseRooms (JSONObject object) throws JSONException {
+    public JSONObject getHouseRooms (JSONObject object) {
 
         try {
 
@@ -1186,7 +1184,7 @@ public class Database  {
 
     }
 
-    public JSONObject getRoomDevices (JSONObject object) throws JSONException {
+    public JSONObject getRoomDevices (JSONObject object) {
 
         try {
 
@@ -1259,7 +1257,7 @@ public class Database  {
 
     }
 
-    public JSONArray getDeviceUpdate () throws JSONException {
+    public JSONArray getDeviceUpdate () {
 
         try {
 
@@ -1293,7 +1291,7 @@ public class Database  {
         }
     }
 
-    public JSONArray getAlarmUpdate () throws JSONException {
+    public JSONArray getAlarmUpdate () {
 
         try {
 
@@ -1327,13 +1325,13 @@ public class Database  {
         }
     }
 
-    public JSONArray getSensorUpdate () throws JSONException {
+    public JSONObject getSensorUpdate () {
 
         try {
 
             dbCollection = databaseObj.getCollection("devices");
 
-            JSONArray jsonArray = new JSONArray();
+            JSONObject finalObject = new JSONObject();
             JSONObject arrayObj = null;
 
             cursor = dbCollection.find();
@@ -1343,27 +1341,40 @@ public class Database  {
                 fetchedObject = cursor.next();
 
                 if (fetchedObject.get("type").equals("Sensor")) {
-                    arrayObj = new JSONObject();
+                    /*arrayObj = new JSONObject();
                     arrayObj.put("deviceID", fetchedObject.get("deviceID"));
                     arrayObj.put("deviceName", fetchedObject.get("deviceName"));
                     arrayObj.put("fahrenheit", fetchedObject.get("fahrenheit"));
                     arrayObj.put("celsius", fetchedObject.get("celsius"));
-                    arrayObj.put("status", fetchedObject.get("status"));
-                    jsonArray.put(arrayObj);
+                    arrayObj.put("status", fetchedObject.get("status"));*/
+                    switch ((int) fetchedObject.get("deviceID")) {
+
+                        case 11053:
+                            finalObject.put("internalTemp", fetchedObject.get("status"));
+                            break;
+
+                        case 11063:
+                            finalObject.put("externalTemp", fetchedObject.get("status"));
+                            break;
+
+                        case  11073:
+                            finalObject.put("electricalConsumption", fetchedObject.get("status"));
+                            break;
+                    }
 
                 }
             }
 
-            return jsonArray;
+            return finalObject;
 
         } catch (Exception e) {
 
             e.printStackTrace();
-            return new JSONArray().put(new JSONObject().put("result", 0));
+            return new JSONObject().put("result", 0);
         }
     }
 
-    public JSONObject deleteDevice (JSONObject jsonObject) throws JSONException {
+    public JSONObject deleteDevice (JSONObject jsonObject) {
 
         try {
 
@@ -1392,7 +1403,7 @@ public class Database  {
         }
     }
 
-    public JSONObject updateDeviceStatus (JSONObject jsonObject) throws JSONException {
+    public JSONObject updateDeviceStatus (JSONObject jsonObject) {
 
         try {
 
@@ -1430,7 +1441,7 @@ public class Database  {
         }
     }
 
-    public JSONObject updateTempDevice (JSONObject jsonObject) throws JSONException {
+    public JSONObject updateTempDevice (JSONObject jsonObject) {
 
         try {
 

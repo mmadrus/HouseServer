@@ -3,7 +3,6 @@ package rest.resource;
 import com.google.gson.JsonObject;
 import org.glassfish.jersey.internal.util.Property;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.html.HTMLBodyElement;
 import rest.database.Database;
@@ -20,7 +19,7 @@ import javax.ws.rs.core.Response;
 public class HouseResource {
 
     @POST
-    public Response addHouse (String json) throws JSONException {
+    public Response addHouse (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -40,7 +39,7 @@ public class HouseResource {
 
     @POST
     @Path("/room")
-    public Response addRoom (String json) throws JSONException {
+    public Response addRoom (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -59,7 +58,7 @@ public class HouseResource {
 
     @POST
     @Path("/device")
-    public Response addDevice (String json) throws JSONException {
+    public Response addDevice (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -79,7 +78,7 @@ public class HouseResource {
 
     @PUT
     @Path("/access")
-    public Response getAccess (String json) throws JSONException {
+    public Response getAccess (String json) {
 
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
@@ -99,7 +98,7 @@ public class HouseResource {
 
     @DELETE
     @Path("/device")
-    public Response deleteDevice (String json) throws JSONException {
+    public Response deleteDevice (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);

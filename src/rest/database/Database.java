@@ -63,19 +63,24 @@ public class Database {
         //db.getDevices("5de6361933cc2a2a94de316c");
 
         //System.out.println(db.hasHouse("5ddf9c659802af312021554d"));
-        System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "myHouse"));
+        //System.out.println(db.addHouse("This House", "Storgatan 10", "135 79", "Kristianstad", "myHouse"));
         //System.out.println(db.deleteHouse("5de8f691ac052a173740fc27"));
         //System.out.println(db.isHouseExist("5de0f5c09802af3120215551"));
-        //System.out.println(db.addRoom("Bathroom1", "Bathroom", "5dee200d2675a14c3268e3bf"));
+        //System.out.println(db.addRoom("Bathroom1", "Bathroom", "2"));
         //System.out.println(db.deleteRoom("5de6a236a885340493488804"));
         //System.out.println(db.getHouseID("myHouse1", "5ddf9c659802af312021554d"));
         //System.out.println(db.getRoomID("Living Room 1", "5de0f5c09802af3120215551"));
         //System.out.println(db.isRoomExist("Living Room 1", "5de0f5c09802af3120215551"));
-        //System.out.println(db.addDevice("myDevice1", "Smoke Alarm", "ACTIVE", "5de6359633cc2a2a94de316b"));
+        System.out.println(db.addDevice("myDevice1", "Smoke Alarm", "ACTIVE", "21"));
         //System.out.println(db.hasDevices("5de6361933cc2a2a94de316c"));
         //System.out.println(db.isUserExist("5de8f9ce33cc2a2a94de316f"));
         //System.out.println(db.deleteDevice("5de92c4333cc2a2a94de3171"));
+        //System.out.println(db.deleteDeviceBySimpID("211"));
         //System.out.println(db.deleteUser("5dee1fde4953612e6c4030c2"));
+        //System.out.println(db.getRoomCount("5de107ce454ec82185944701"));
+        //System.out.println(db.getHouseObjID("1"));
+        //System.out.println(db.getDeviceCount("5de6359633cc2a2a94de316b"));
+        //System.out.println(db.getRoomObjID("21"));
 
 
 
@@ -100,7 +105,9 @@ public class Database {
 
 
         /*
-        ArrayList<Room> rooms = db.getRooms("5de107ce454ec82185944700");
+
+        //ArrayList<Room> rooms = db.getRooms("5de107ce454ec82185944700");
+        ArrayList<Room> rooms = db.getRoomsBySimpHouseID("1");
         if (rooms.size() != 0) {
             System.out.println("Rooms inside house ID: " + rooms.get(0).getHouseID());
             for (Room room : rooms) {
@@ -111,7 +118,9 @@ public class Database {
         else{
             System.out.println("No rooms inside this house");
         }
+
         */
+
 
 
 
@@ -322,6 +331,33 @@ public class Database {
         return rooms;
     }
 
+    //get list of rooms inside the house
+    public ArrayList<Room> getRoomsBySimpHouseID (String houseid){
+
+        String houseObjID = getHouseObjID(houseid);
+
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("houseid", houseObjID);
+        cursor = dbCollection.find(document);
+
+        ArrayList<Room> rooms = new ArrayList<>();
+
+        while (cursor.hasNext()){
+            BasicDBObject obj = new BasicDBObject();
+            obj = (BasicDBObject) cursor.next();
+
+            String roomid = obj.get("_id").toString();
+            String roomname = obj.get("roomname").toString();
+            String roomtype = obj.get("roomtype").toString();
+            String houseID = obj.get("houseid").toString();
+
+            rooms.add(new Room(roomid, roomname, roomtype, houseID));
+        }
+
+        return rooms;
+    }
+
 
     //get information about the house
     public House getHouseInfo(String houseid){
@@ -476,9 +512,15 @@ public class Database {
     }
 
     //add room only if the house exist.
-    public String addRoom(String roomname, String roomtype, String houseid){
+    public String addRoom(String roomname, String roomtype, String hid){
+
+        String houseid = getHouseObjID(hid);
+
         boolean isHouseExist = isHouseExist(houseid);
         boolean isRoomExist = isRoomExist(roomname, houseid);
+
+        long newRoomID = getRoomCount(houseid) + 1;
+        String newIDtoString = hid + newRoomID;
 
         if(isHouseExist == true && isRoomExist == false){
             dbCollection = databaseObj.getCollection("Room");
@@ -486,6 +528,7 @@ public class Database {
             document.put("roomname", roomname);
             document.put("roomtype", roomtype);
             document.put("houseid", houseid);
+            document.put("room-id", newIDtoString);
             dbCollection.insert(document);
             return "Successfully added room";
         }
@@ -575,8 +618,14 @@ public class Database {
     }
 
     //add Device to this room
-    public String addDevice(String devicename, String type, String status, String roomid){
+    public String addDevice(String devicename, String type, String status, String simpRoomid){
+
+        String roomid = getRoomObjID(simpRoomid);
         boolean isRoomExist = isRoomExist(roomid);
+
+
+        long newDeviceID = getDeviceCount(roomid) + 1;
+        String newDeviceIDtoString = simpRoomid + newDeviceID;
 
         if (isRoomExist == true){
             dbCollection = databaseObj.getCollection("Device");
@@ -584,6 +633,7 @@ public class Database {
             document.put("devicename", devicename);
             document.put("devicetype", type);
             document.put("status", status);
+            document.put("device-id", newDeviceIDtoString);
             document.put("roomid", roomid);
             dbCollection.insert(document);
             return "Successfully added device";
@@ -634,6 +684,21 @@ public class Database {
         }
     }
 
+    public String deleteDeviceBySimpID(String deviceid){
+        boolean isDeviceExist = isDeviceExist1(deviceid);
+
+        if (isDeviceExist == true){
+            dbCollection = databaseObj.getCollection("Device");
+            document = new BasicDBObject();
+            document.put("device-id", deviceid);
+            dbCollection.remove(document);
+            return "Successfully removed the device";
+        }
+        else{
+            return "Device does not exist";
+        }
+    }
+
     //check if this device exists
     public boolean isDeviceExist(String deviceid){
         dbCollection = databaseObj.getCollection("Device");
@@ -646,6 +711,19 @@ public class Database {
         }
         return false;
     }
+
+    public boolean isDeviceExist1(String simpdeviceid){
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document.put("device-id", simpdeviceid);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return true;
+        }
+        return false;
+    }
+
 
     //removes the user account as well as the house, rooms
     //and eventually devices associated with this user
@@ -679,15 +757,54 @@ public class Database {
             return Integer.parseInt(cursor.next().get("house-id").toString());
         }
         return 0;
-
     }
 
-    /*
-    public long getRoomCount(){
+    public String getHouseObjID(String simpHouseID){
         dbCollection = databaseObj.getCollection("House");
         document = new BasicDBObject();
+        document.put("house-id", simpHouseID);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return cursor.next().get("_id").toString();
+        }
+        else{
+            return "not exist";
+        }
     }
-    */
+
+    public String getRoomObjID(String simpRoomID){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("room-id", simpRoomID);
+        cursor = dbCollection.find(document);
+
+        if (cursor.hasNext()){
+            return cursor.next().get("_id").toString();
+        }
+        else{
+            return "not exist";
+        }
+    }
+
+    public long getRoomCount(String houseid){
+        dbCollection = databaseObj.getCollection("Room");
+        document = new BasicDBObject();
+        document.put("houseid", houseid);
+        long count = dbCollection.count(document);
+
+        return count;
+    }
+
+    public long getDeviceCount(String roomid){
+        dbCollection = databaseObj.getCollection("Device");
+        document = new BasicDBObject();
+        document.put("roomid", roomid);
+        long count = dbCollection.count(document);
+
+        return count;
+    }
+
     /*
     public String editHouse(String houseid){
         dbCollection = databaseObj.getCollection("House");
@@ -707,6 +824,8 @@ public class Database {
         //newDocument.put("$and", document);
     }
     */
+
+
 
 
 

@@ -61,7 +61,6 @@ public class Database {
 
 
     public static void main(String[] args) {
-        getInstance().addDevices();
     }
 
     private Database() {

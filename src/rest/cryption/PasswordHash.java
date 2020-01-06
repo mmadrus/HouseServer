@@ -4,7 +4,7 @@ package rest.cryption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class PassWordHash {
+public class PasswordHash {
 
     public String generateHash(String PasswordToHash) {
         String generatedPasswordHash = null;

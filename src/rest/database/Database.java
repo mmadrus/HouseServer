@@ -16,10 +16,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import rest.cryption.Cryption;
+import rest.cryption.PasswordHash;
 import rest.models.Token;
 import rest.models.User;
 import rest.protocols.JSONProtocol;
 import rest.protocols.TokenProtocol;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import static rest.cryption.Cryption.cryption;
 
@@ -532,14 +537,14 @@ public class Database {
             } else {
 
                 System.out.println("Room not found");
-                return failJson.put("result", 0).put("deviceID", "");
+                return failJson.put("result", 0).put("deviceID", 0);
 
             }
 
 
         } catch (JSONException e) {
             e.printStackTrace();
-            return failJson.put("result", 0).put("deviceID", "Request failed");
+            return failJson.put("result", 0).put("deviceID", 0);
         }
 
     }
@@ -935,6 +940,7 @@ public class Database {
             int tempInt;
             BasicDBObject tempObj = null;
             JSONObject tempArrayObj = null;
+            JSONObject temp = null;
 
             for (int i = 0; i < list.size(); i++) {
                 tempObj = new BasicDBObject();
@@ -951,6 +957,9 @@ public class Database {
                 arrayObj = new JSONObject();
                 arrayObj.put("houseName", tempArrayObj.getString("houseName"));
                 arrayObj.put("houseID", tempArrayObj.get("houseID"));
+                arrayObj.put("housePassword", tempArrayObj.getString("housePassword"));
+                temp = getHouseRooms(arrayObj);
+                arrayObj.put("listOfRooms", temp.getJSONArray("listOfRooms"));
 
                 jsonArray.put(arrayObj);
             }
@@ -994,6 +1003,7 @@ public class Database {
             int tempInt;
             BasicDBObject tempObj = null;
             JSONObject tempArrayObj = null;
+            JSONObject temp = null;
 
             System.out.println(list.toString());
 
@@ -1012,6 +1022,8 @@ public class Database {
                 arrayObj = new JSONObject();
                 arrayObj.put("roomName", tempArrayObj.getString("roomName"));
                 arrayObj.put("roomID", tempArrayObj.getInt("roomID"));
+                temp = getRoomDevices(arrayObj);
+                arrayObj.put("listOfDevices", temp.getJSONArray("listOfDevices"));
 
                 jsonArray.put(arrayObj);
             }
@@ -1073,9 +1085,14 @@ public class Database {
 
                 tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
 
+
                 arrayObj = new JSONObject();
+                System.out.println("WWWWWWWWTTTTTTFFFFFFFFF" + tempArrayObj.toString(1));
                 arrayObj.put("deviceName", tempArrayObj.getString("deviceName"));
                 arrayObj.put("deviceID", tempArrayObj.getInt("deviceID"));
+                arrayObj.put("status", tempArrayObj.getInt("status"));
+                arrayObj.put("type", tempArrayObj.getString("type"));
+
 
                 jsonArray.put(arrayObj);
             }
@@ -1299,4 +1316,68 @@ public class Database {
         }
     }
 
+    private class Cryption {
+
+    /*
+    The encryptor/decryptor class.
+    You call the method 'cryption' with parameters String and mode.
+    Encrypt the String = Mode 1  (Cipher.ENCRYPT_MODE, kan också använda)
+    Decrypt the String = Mode 2 (Cipher.DECRYPT.MODE, kan också använda)
+
+
+     */
+
+        private String salt = "ssshhhhhhhhhhh!!!!";
+
+
+
+        public String cryption(String strToCrypt, int mode) {
+            String string = "";
+
+            try {
+
+                IvParameterSpec iv = new IvParameterSpec(getIv());
+                SecretKeySpec sKeySpec = new SecretKeySpec(generateKeyFromString(), "AES");
+                Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
+                cipher.init(mode, sKeySpec, iv);
+//            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+
+                switch (mode) {
+
+                    case 1:
+                        string = Base64.getEncoder().encodeToString(cipher.doFinal(strToCrypt.getBytes("UTF-8")));
+                        break;
+
+                    case 2:
+                        string = new String(cipher.doFinal(Base64.getDecoder().decode(strToCrypt)));
+
+                        break;
+
+                }
+                System.out.println("Mode: " + mode);
+                System.out.println(string);
+                return string;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+
+        private byte[] generateKeyFromString() {
+
+            return new PasswordHash().generateHash(salt).substring(0, 16).getBytes();
+        }
+
+        private byte[] getIv() {
+
+            return new byte[]{0x04, 0x02, 0x0f, 0x0a,
+                    0x08, 0x08, 0x05, 0x0c,
+                    0x03, 0x01, 0x0e, 0x0f,
+                    0x08, 0x08, 0x05, 0x0c};
+
+        }
+
+    }
 }

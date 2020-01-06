@@ -58,7 +58,7 @@ public class Cryption {
 
     private static byte[] generateKeyFromString() {
 
-        return new PassWordHash().generateHash(salt).substring(0, 16).getBytes();
+        return new PasswordHash().generateHash(salt).substring(0, 16).getBytes();
     }
 
     private static byte[] getIv() {

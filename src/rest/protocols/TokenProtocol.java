@@ -25,13 +25,13 @@ public class TokenProtocol {
 
     public boolean isAlive (String tokenString) {
 
-        /*for (Token token: validTokens) {
+        for (Token token: validTokens) {
 
             if (token.getToken().equals(tokenString)) {
 
                 return true;
             }
-        }*/
+        }
 
         if (tokenString.equals("501dd60098c34007bb220853fc4e134b")) {
 

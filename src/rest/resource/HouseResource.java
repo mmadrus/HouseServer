@@ -3,6 +3,7 @@ package rest.resource;
 import com.google.gson.JsonObject;
 import org.glassfish.jersey.internal.util.Property;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.html.HTMLBodyElement;
 import rest.database.Database;
@@ -18,64 +19,8 @@ import javax.ws.rs.core.Response;
 @Path("service/house")
 public class HouseResource {
 
-    @GET
-    public Response getHouses (String json) {
-
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
-        JSONArray object = null;
-        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
-
-            object = Database.getInstance().getUserHouses(jsonObject);
-
-        } else {
-
-            object = new JSONArray().put(new JSONObject().put("result", 0));
-        }
-
-        return Response.ok(object.toString()).build();
-    }
-
-    @GET
-    @Path("/room")
-    public Response getRooms (String json) {
-
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
-        JSONObject object = new JSONObject();
-        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
-
-            object = Database.getInstance().getHouseRooms(jsonObject);
-
-        } else {
-
-            object = new JSONObject().put("result", "fail");
-        }
-
-        return Response.ok(object.toString()).build();
-    }
-
-    @GET
-    @Path("/room/device")
-    public Response getDevices (String json) {
-
-        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
-        JSONObject object = new JSONObject();
-        if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
-
-            object = Database.getInstance().getRoomDevices(jsonObject);
-
-        } else {
-
-            object = new JSONObject().put("result", "fail");
-        }
-
-        return Response.ok(object.toString()).build();
-    }
-
     @POST
-    public Response addHouse (String json) {
+    public Response addHouse (String json) throws JSONException {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -95,7 +40,7 @@ public class HouseResource {
 
     @POST
     @Path("/room")
-    public Response addRoom (String json) {
+    public Response addRoom (String json) throws JSONException {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -114,7 +59,7 @@ public class HouseResource {
 
     @POST
     @Path("/device")
-    public Response addDevice (String json) {
+    public Response addDevice (String json) throws JSONException {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
@@ -134,7 +79,7 @@ public class HouseResource {
 
     @PUT
     @Path("/access")
-    public Response getAccess (String json) {
+    public Response getAccess (String json) throws JSONException {
 
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
@@ -154,7 +99,7 @@ public class HouseResource {
 
     @DELETE
     @Path("/device")
-    public Response deleteDevice (String json) {
+    public Response deleteDevice (String json) throws JSONException {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);

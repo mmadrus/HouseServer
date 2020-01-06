@@ -23,17 +23,17 @@ public class HouseResource {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
         Database.getInstance().commandLog(jsonObject);
-        JSONArray object = null;
+        JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
-            object = Database.getInstance().getUserHouses(jsonObject);
+            object = Database.getInstance().getSpecificHouse(jsonObject);
 
         } else {
 
-            object = new JSONArray().put(new JSONObject().put("result", 0));
+            object = new JSONObject().put("result", 0);
         }
 
-        return Response.ok(object.toString()).build();
+        return Response.ok(object.toString(1)).build();
     }
 
     @GET

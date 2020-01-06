@@ -1,15 +1,22 @@
 package rest.database;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import rest.cryption.Cryption;
+import rest.cryption.PasswordHash;
 import rest.models.Token;
 import rest.models.User;
 import rest.protocols.JSONProtocol;
@@ -18,6 +25,8 @@ import rest.protocols.TokenProtocol;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import static rest.cryption.Cryption.cryption;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -55,7 +64,6 @@ public class Database {
     private DBObject fetchedObject;
     private MongoCredential mongoCredential = null;
     private DB databaseObj;
-    private Cryption cryption = new Cryption();
 
 
 
@@ -86,8 +94,6 @@ public class Database {
         dbCollection.drop();
         dbCollection = databaseObj.getCollection("houses");
         dbCollection.drop();
-        dbCollection = databaseObj.getCollection("users");
-        dbCollection.drop();
     }
 
     private void addDevices () {
@@ -100,7 +106,7 @@ public class Database {
         document.put("deviceID", 1101);
         document.put("status", 0);
         document.put("deviceName", "Indoor Lamp");
-        document.put("type", "Lamp");
+        document.put("type", "Device");
         document.put("flag", false);
         dbCollection.insert(document);
 
@@ -108,7 +114,7 @@ public class Database {
         document.put("deviceID", 1102);
         document.put("status", 0);
         document.put("deviceName", "Outdoor Lamp");
-        document.put("type", "Lamp");
+        document.put("type", "Device");
         document.put("flag", false);
         dbCollection.insert(document);
 
@@ -412,6 +418,7 @@ public class Database {
         gson = new Gson();
         User user = gson.fromJson(jsonString, User.class);
         document.put("username", jsonObject.getString("username"));
+        document.put("password", jsonObject.getString("password"));
 
         cursor = dbCollection.find(document);
 
@@ -421,7 +428,7 @@ public class Database {
 
             fetchedObject = cursor.next();
             if (fetchedObject.get("username").equals(user.getUsername())) {
-                temp = cryption.cryption((String) fetchedObject.get("password"), 2);
+                temp = (String) fetchedObject.get("password");
                 if (temp.equals(user.getPassword())) {
                     Token token = new Token();
                     TokenProtocol.getInstance().addToken(token);
@@ -699,7 +706,7 @@ public class Database {
             query = new BasicDBObject();
             query.put("firstName", user.getFirstName());
             query.put("lastName", user.getLastName());
-            query.put("password", cryption.cryption(user.getPassword(), 1));
+            query.put("password", user.getPassword());
             query.put("username", user.getUsername());
             query.put("userID", user.getUserId());
             query.put("email", user.getEmail());
@@ -891,7 +898,7 @@ public class Database {
                 if (temp.getString("username").equals(jsonObject.getString("username"))) {
 
                     BasicDBList list = (BasicDBList) fetchedObject.get("houseList");
-                    list.add(String.valueOf(houseId) + ":" + jsonObject.getString("houseName"));
+                    list.add(houseId);
 
                     query = new BasicDBObject();
                     query.append("$set", new BasicDBObject().append("houseList", list));
@@ -904,141 +911,6 @@ public class Database {
         } catch (Exception e) {
 
             e.printStackTrace();
-        }
-    }
-
-    public JSONObject getSpecificHouse (JSONObject jsonObject) {
-
-        try {
-
-            dbCollection = databaseObj.getCollection("users");
-
-            JSONObject arrayObj = null;
-
-            document = new BasicDBObject();
-            document.put("username", jsonObject.getString("username"));
-            cursor = dbCollection.find(document);
-
-            if (!cursor.hasNext()) {
-                return null;
-            }
-
-            fetchedObject = cursor.next();
-
-            BasicDBList list = (BasicDBList) fetchedObject.get("houseList");
-            DBCollection tempCollection = databaseObj.getCollection("houses");
-            Cursor tempC = null;
-            DBObject tempFetched = null;
-            int tempInt;
-            BasicDBObject tempObj = null;
-            JSONObject tempArrayObj = null;
-            JSONObject temp = null;
-            String tempeStr = "";
-            String [] strArray;
-
-
-            for (int i = 0; i < list.size(); i++) {
-
-
-                tempObj = new BasicDBObject();
-                tempeStr = String.valueOf(list.get(i));
-                strArray = tempeStr.split(":");
-
-                System.out.println(strArray);
-                if (jsonObject.getString("houseName").equals(strArray[1])) {
-
-                    tempInt = Integer.parseInt(strArray[0]);
-                    System.out.println(tempInt);
-                    tempObj.put("houseID", tempInt);
-
-                    tempC = tempCollection.find(tempObj);
-
-                    tempFetched = tempC.next();
-
-                    tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
-
-                    System.out.println(tempArrayObj.toString());
-
-                    arrayObj = new JSONObject();
-                    arrayObj.put("houseName", tempArrayObj.getString("houseName"));
-                    arrayObj.put("houseID", tempArrayObj.get("houseID"));
-                    temp = getSpecificHousesRoom(arrayObj);
-                    arrayObj.put("listOfRooms", temp.getJSONArray("listOfRooms"));
-
-                    return arrayObj;
-                }
-
-            }
-
-            return arrayObj.put("result", 0).put("fail", "db1");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return new JSONObject().put("result", 0).put("fail", "db2");
-        }
-    }
-
-    public JSONObject getSpecificHousesRoom (JSONObject object) {
-        try {
-
-            dbCollection = databaseObj.getCollection("houses");
-
-            JSONArray jsonArray = new JSONArray();
-            JSONObject arrayObj = null;
-            JSONObject finalObject = new JSONObject();
-
-            document = new BasicDBObject();
-            document.put("houseID", object.getInt("houseID"));
-            cursor = dbCollection.find(document);
-
-            if (!cursor.hasNext()) {
-                return null;
-            }
-
-            fetchedObject = cursor.next();
-
-            finalObject.put("houseName", fetchedObject.get("houseName"));
-            finalObject.put("houseID", object.getInt("houseID"));
-
-            BasicDBList list = (BasicDBList) fetchedObject.get("roomList");
-            DBCollection tempCollection = databaseObj.getCollection("rooms");
-            Cursor tempC = null;
-            DBObject tempFetched = null;
-            int tempInt;
-            BasicDBObject tempObj = null;
-            JSONObject tempArrayObj = null;
-            JSONObject temp = null;
-
-            System.out.println(list.toString());
-
-            for (int i = 0; i < list.size(); i++) {
-                tempObj = new BasicDBObject();
-                tempInt = (int) list.get(i);
-
-                tempObj.put("roomID", tempInt);
-
-                tempC = tempCollection.find(tempObj);
-
-                tempFetched = tempC.next();
-
-                tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
-
-                arrayObj = new JSONObject();
-                arrayObj.put("roomName", tempArrayObj.getString("roomName"));
-                arrayObj.put("roomID", tempArrayObj.getInt("roomID"));
-
-                jsonArray.put(arrayObj);
-            }
-
-            finalObject.put("listOfRooms", jsonArray);
-
-            return finalObject;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return new JSONObject().put("result", 0);
         }
     }
 
@@ -1069,15 +941,10 @@ public class Database {
             BasicDBObject tempObj = null;
             JSONObject tempArrayObj = null;
             JSONObject temp = null;
-            String tempeStr = "";
-            String [] strArray;
-
 
             for (int i = 0; i < list.size(); i++) {
                 tempObj = new BasicDBObject();
-                tempeStr = String.valueOf(list.get(i));
-                strArray = tempeStr.split(":");
-                tempInt = Integer.parseInt(strArray[0]);
+                tempInt = (int) list.get(i);
                 System.out.println(tempInt);
                 tempObj.put("houseID", tempInt);
 
@@ -1257,7 +1124,7 @@ public class Database {
 
                 fetchedObject = cursor.next();
 
-                if (!fetchedObject.get("type").equals("Sensor") && !fetchedObject.get("type").equals("Alarm")) {
+                if (fetchedObject.get("type").equals("Device")) {
                     arrayObj = new JSONObject();
                     arrayObj.put("deviceID", fetchedObject.get("deviceID"));
                     arrayObj.put("deviceName", fetchedObject.get("deviceName"));
@@ -1500,7 +1367,7 @@ public class Database {
 
         private byte[] generateKeyFromString() {
 
-            return generateHash(salt).substring(0, 16).getBytes();
+            return new PasswordHash().generateHash(salt).substring(0, 16).getBytes();
         }
 
         private byte[] getIv() {
@@ -1510,24 +1377,6 @@ public class Database {
                     0x03, 0x01, 0x0e, 0x0f,
                     0x08, 0x08, 0x05, 0x0c};
 
-        }
-
-        private String generateHash(String PasswordToHash) {
-            String generatedPasswordHash = null;
-            try {
-                MessageDigest md = MessageDigest.getInstance("SHA-256");
-                md.update(PasswordToHash.getBytes());
-                byte[] bytes = md.digest();
-                StringBuilder sb = new StringBuilder();
-
-                for (byte aByte : bytes) {
-                    sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-                }
-                generatedPasswordHash = sb.toString();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            return generatedPasswordHash;
         }
 
     }

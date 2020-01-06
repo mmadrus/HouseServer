@@ -36,7 +36,7 @@ public class HardwareSocket {
 
         try {
 
-            //hardwareMessageProtocol.decodeMessage(message);
+            hardwareMessageProtocol.decodeMessage(message);
             System.out.println("MESSAGE: " + message);
 
         } catch (Exception e) {

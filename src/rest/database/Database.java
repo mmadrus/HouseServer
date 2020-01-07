@@ -38,7 +38,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 @SuppressWarnings("DuplicatedCode")
 public class Database  {
 
-    private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
+    private static final String URL = "ec2-13-53-175-23.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
     private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
     private static final String PASSWORD = "serverisking";
@@ -68,6 +68,9 @@ public class Database  {
 
 
     public static void main(String[] args) {
+        Database database = Database.getInstance();
+
+        database.getAllUsers();
     }
 
     private Database() {

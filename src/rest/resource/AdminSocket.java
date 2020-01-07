@@ -1,6 +1,7 @@
 package rest.resource;
 
 import org.json.JSONObject;
+import rest.database.Database;
 import rest.utils.Stats;
 
 import javax.websocket.*;
@@ -23,26 +24,28 @@ public class AdminSocket {
         this.session = s;
         serverEndpoints.add(this);
         clients.add(s);
+        Stats.getInstance().setAdminOnline(true);
     }
 
     @OnMessage
-    public void onMessage(Session session, String message)
+    public void onMessage(String message)
             throws IOException {
 
         try {
 
             int adminCommand = Integer.parseInt(message);
+            System.out.println("HAAAAAAALLÅÅÅÅÅÅÅ: " + adminCommand);
 
             switch (adminCommand) {
 
                 case 1:
 
-                    //sendAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+                    sendAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).put("adminCommand", 1).toString());
                     break;
 
-                case 2:
+                case 3:
 
-                    //sendAdmin(new JSONObject().put("serverOnline", true).toString());
+                    sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
                     break;
 
                 default:
@@ -61,6 +64,7 @@ public class AdminSocket {
     public void onClose(Session session) throws IOException {
 
         serverEndpoints.remove(this);
+        Stats.getInstance().setAdminOnline(false);
     }
 
     public static void sendAdmin(String message)

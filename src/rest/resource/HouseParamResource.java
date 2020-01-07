@@ -21,7 +21,7 @@ public class HouseParamResource {
                                     @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getRoomDevices"));
         JSONObject object = new JSONObject();
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -41,7 +41,7 @@ public class HouseParamResource {
                                    @PathParam("houseID") int houseID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getHouseRooms"));
         JSONObject object = new JSONObject();
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -60,7 +60,7 @@ public class HouseParamResource {
     public Response getUserHouses (@PathParam("username") String username, @PathParam("token") String token) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token);
-        System.out.println(jsonObject.toString());
+        Database.getInstance().commandLog(jsonObject.put("request", "getUserHouses"));
         Database.getInstance().commandLog(jsonObject);
         JSONArray object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {

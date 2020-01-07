@@ -2,6 +2,7 @@ package rest.database;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -20,10 +21,13 @@ import rest.models.Token;
 import rest.models.User;
 import rest.protocols.JSONProtocol;
 import rest.protocols.TokenProtocol;
+import rest.utils.Stats;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import static rest.resource.AdminSocket.sendAdmin;
 
 /*
 The database class. For now we use a local database, you need to download and start MongoDB as a service, call it "HouseDatabase".
@@ -38,7 +42,7 @@ The method uses "our" object id notation (e.g. 1234, as protocol states)
 @SuppressWarnings("DuplicatedCode")
 public class Database  {
 
-    private static final String URL = "ec2-13-48-28-82.eu-north-1.compute.amazonaws.com";
+    private static final String URL = "ec2-13-53-175-23.eu-north-1.compute.amazonaws.com";
     private static final String AUTH_USER = "server_db";
     private static final char[] PASSWORD_AS_ARR = new char[]{'s', 'e', 'r', 'v', 'e', 'r', 'i', 's', 'k', 'i', 'n', 'g'};
     private static final String PASSWORD = "serverisking";
@@ -250,11 +254,32 @@ public class Database  {
 
     public void commandLog(JSONObject jsonObject) {
 
-        dbCollection = databaseObj.getCollection("logs");
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateWithoutTime = sdf.parse(sdf.format(new Date()));
+            jsonObject.put("date", dateWithoutTime);
+            dbCollection = databaseObj.getCollection("logs");
+            document = BasicDBObject.parse(jsonObject.toString());
+            dbCollection.insert(document);
+
+            if (Stats.getInstance().isAdminOnline()) {
+                sendAdmin(jsonObject.put("adminCommand", 2).toString());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void testHouse (JSONObject jsonObject) {
+
+        dbCollection = databaseObj.getCollection("test");
         document = new BasicDBObject();
 
         try {
 
+            dbCollection.getCount();
             document.put("Date", new Date());
             document.put("User-command", jsonObject.toString());
             dbCollection.insert(document);
@@ -264,26 +289,6 @@ public class Database  {
             e.printStackTrace();
         }
     }
-
-    /*public JSONObject changeDeviceState (JSONObject object) {
-
-        try {
-
-            dbCollection = databaseObj.getCollection("devices");
-            document = new BasicDBObject();
-            document.append("$set", new BasicDBObject().append("status", object.getInt("command")));
-
-            BasicDBObject search = new BasicDBObject().append("deviceID", object.getInt("deviceID"));
-
-            dbCollection.update(search, document);
-            return new JSONObject().put("result", 1);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return new JSONObject().put("result", 0);
-        }
-    }*/
 
     //PUT/COMMAND.docx
     private JSONObject changeState(JSONObject fromServer) {
@@ -991,7 +996,7 @@ public class Database  {
         }
     }
 
-    public JSONObject getSpecificHousesRoom (JSONObject object) {
+    private JSONObject getSpecificHousesRoom(JSONObject object) {
         try {
 
             dbCollection = databaseObj.getCollection("houses");
@@ -1020,7 +1025,7 @@ public class Database  {
             int tempInt;
             BasicDBObject tempObj = null;
             JSONObject tempArrayObj = null;
-            JSONObject temp = null;
+            JSONArray temp = null;
 
             System.out.println(list.toString());
 
@@ -1039,6 +1044,8 @@ public class Database  {
                 arrayObj = new JSONObject();
                 arrayObj.put("roomName", tempArrayObj.getString("roomName"));
                 arrayObj.put("roomID", tempArrayObj.getInt("roomID"));
+                temp = getDeviceUpdate();
+                arrayObj.put("listOfDevices", temp);
 
                 jsonArray.put(arrayObj);
             }
@@ -1046,6 +1053,69 @@ public class Database  {
             finalObject.put("listOfRooms", jsonArray);
 
             return finalObject;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", 0);
+        }
+    }
+
+    private JSONObject getWebDevices (JSONObject jsonObject) {
+
+        try {
+
+            dbCollection = databaseObj.getCollection("rooms");
+
+            JSONArray jsonArray = new JSONArray();
+            JSONObject arrayObj = null;
+
+            document = new BasicDBObject();
+            document.put("roomID", jsonObject.getInt("roomID"));
+            cursor = dbCollection.find(document);
+
+            if (!cursor.hasNext()) {
+                return null;
+            }
+
+            fetchedObject = cursor.next();
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            BasicDBList list = (BasicDBList) fetchedObject.get("deviceList");
+            DBCollection tempCollection = databaseObj.getCollection("devices");
+            Cursor tempC = null;
+            DBObject tempFetched = null;
+            int tempInt;
+            BasicDBObject tempObj = null;
+            JSONObject tempArrayObj = null;
+            JSONObject temp = null;
+
+            System.out.println(list.toString());
+
+            for (int i = 0; i < list.size(); i++) {
+                tempObj = new BasicDBObject();
+                tempInt = (int) list.get(i);
+
+                tempObj.put("deviceID", tempInt);
+
+                tempC = tempCollection.find(tempObj);
+
+                tempFetched = tempC.next();
+
+                tempArrayObj = JSONProtocol.getInstance().toJson(tempFetched.toString());
+
+                if (!fetchedObject.get("type").equals("Sensor") && !fetchedObject.get("type").equals("Alarm")) {
+                    arrayObj = new JSONObject();
+                    arrayObj.put("deviceID", tempArrayObj.getInt("deviceID"));
+                    arrayObj.put("deviceName", tempArrayObj.getString("deviceName"));
+                    arrayObj.put("status", tempArrayObj.getInt("status"));
+                    jsonArray.put(arrayObj);
+
+                }
+            }
+
+            return new JSONObject().put("listOfDevices", jsonArray);
 
         } catch (Exception e) {
 
@@ -1321,7 +1391,7 @@ public class Database  {
         } catch (Exception e) {
 
             e.printStackTrace();
-            return new JSONArray().put(new JSONObject().put("result", 0));
+            return new JSONArray().put(new JSONObject().put("result", 0).put("fail", "db"));
         }
     }
 
@@ -1475,6 +1545,39 @@ public class Database  {
             return new JSONObject().put("result", 0);
         }
     }
+
+    public JSONObject getDBCount () {
+
+        try {
+
+            JSONObject count = new JSONObject();
+
+            dbCollection = databaseObj.getCollection("users");
+
+            count.put("Users", dbCollection.count());
+
+            dbCollection = databaseObj.getCollection("houses");
+
+            count.put("Houses", dbCollection.count());
+
+            dbCollection = databaseObj.getCollection("rooms");
+
+            count.put("Rooms", dbCollection.count());
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            count.put("Devices", dbCollection.count());
+
+            return count;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", "fail");
+        }
+
+    }
+
 
     private class Cryption {
 

@@ -16,12 +16,6 @@ import javax.ws.rs.core.Response;
 public class HouseWebHouse {
 
     @GET
-    public Response test () {
-
-        return Response.ok("WTF").build();
-    }
-
-    @GET
     @Path("/{username}/{token}/{houseName}")
     public Response getHouses (@PathParam("username") String username, @PathParam("token") String token,
                                @PathParam("houseName") String housename) {
@@ -38,7 +32,7 @@ public class HouseWebHouse {
             object = new JSONObject().put("result", 0);
         }
 
-        return Response.ok(object.toString()).build();
+        return Response.ok(object.toString(1)).build();
     }
 
     @GET

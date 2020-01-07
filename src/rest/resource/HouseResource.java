@@ -22,7 +22,7 @@ public class HouseResource {
     public Response addHouse (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "addHouse"));
         JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -42,7 +42,7 @@ public class HouseResource {
     public Response addRoom (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "addRoom"));
         JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -61,7 +61,7 @@ public class HouseResource {
     public Response addDevice (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "addDevice"));
         JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -82,7 +82,7 @@ public class HouseResource {
 
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getAccess"));
         JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 

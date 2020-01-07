@@ -27,7 +27,7 @@ public class CreateUserResource {
         JSONObject newUser = JSONProtocol.getInstance().toJson(json);
         JSONObject serverResponse = userProtocol.setProtocolString(newUser);
         newUser.remove("password");
-        Database.getInstance().commandLog(newUser);
+        Database.getInstance().commandLog(newUser.put("request", "createUser"));
 
         return Response.ok(serverResponse.toString()).build();
     }

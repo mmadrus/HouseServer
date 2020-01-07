@@ -28,7 +28,7 @@ public class LoginResource {
 
         JSONObject authenticateUser = JSONProtocol.getInstance().toJson(json);
 
-        Database.getInstance().commandLog(authenticateUser);
+        Database.getInstance().commandLog(authenticateUser.put("request", "login"));
 
         JSONObject dbResponse = loginProtocol.setProtocolString(authenticateUser);
 

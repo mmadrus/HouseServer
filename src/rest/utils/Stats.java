@@ -16,14 +16,24 @@ public class Stats {
         return stats;
     }
 
-    private boolean hardwareOnline = false;
+    private int hardwareOnline = 0;
 
-    public boolean isHardwareOnline() {
+    public int isHardwareOnline() {
         return hardwareOnline;
     }
 
-    public void setHardwareOnline(boolean hardwareOnline) {
+    public void setHardwareOnline(int hardwareOnline) {
         this.hardwareOnline = hardwareOnline;
+    }
+
+    private boolean adminOnline = false;
+
+    public boolean isAdminOnline() {
+        return adminOnline;
+    }
+
+    public void setAdminOnline(boolean adminOnline) {
+        this.adminOnline = adminOnline;
     }
 
     public void sendToAdmin (String json) {

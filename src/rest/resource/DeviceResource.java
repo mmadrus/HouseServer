@@ -22,7 +22,7 @@ public class DeviceResource {
     public Response getUpdates (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getDevice"));
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -41,7 +41,7 @@ public class DeviceResource {
     public Response getSensors (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getSensor"));
         JSONObject jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -60,7 +60,7 @@ public class DeviceResource {
     public Response getAlarms (String json) {
 
         JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "getAlarm"));
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 

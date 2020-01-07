@@ -1,15 +1,19 @@
 package rest.resource;
 
 import org.json.JSONObject;
+import rest.database.Database;
 import rest.protocols.HardwareMessageProtocol;
 import rest.utils.Stats;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import static rest.resource.AdminSocket.sendAdmin;
 
 @ServerEndpoint(value="/sockets/arduino")
 public class HardwareSocket {
@@ -26,9 +30,7 @@ public class HardwareSocket {
         this.session = s;
         serverEndpoints.add(this);
         clients.add(s);
-        Stats.getInstance().setHardwareOnline(true);
-        //Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
-        //getSensors();
+        Stats.getInstance().setHardwareOnline(1);
     }
 
     @OnMessage
@@ -37,8 +39,22 @@ public class HardwareSocket {
 
         try {
 
-            hardwareMessageProtocol.decodeMessage(message);
-            System.out.println("MESSAGE: " + message);
+            String str = message.replace("\r\n", "");
+            String result = "";
+            String id = "";
+
+            if (str.length() < 6) {
+                id = str.substring(0,4);
+                result = str.substring(4);
+
+            } else {
+                result = (str.substring(0,5));
+                id = (str.substring(5));
+            }
+
+
+            Database.getInstance().updateDeviceStatus(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Integer.parseInt(result)));
+            //sendAdmin(new JSONObject().put("adminCommand", 4).put("id", id).put("result", result).toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,8 +67,7 @@ public class HardwareSocket {
     public void onClose(Session session) throws IOException {
 
         serverEndpoints.remove(this);
-        Stats.getInstance().setHardwareOnline(false);
-        //Stats.getInstance().sendToAdmin(new JSONObject().put("hardwareOnline", Stats.getInstance().isHardwareOnline()).toString());
+        Stats.getInstance().setHardwareOnline(0);
     }
 
     public static void broadcast(String message)
@@ -70,29 +85,4 @@ public class HardwareSocket {
         });
     }
 
-    private void getSensors () {
-
-        try {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        broadcast("11053");
-                        Thread.sleep(20000);
-                        broadcast("11063");
-                        Thread.sleep(20000);
-                        broadcast("11073");
-                        Thread.sleep(20000);
-                    } catch (IOException | EncodeException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-    }
 }

@@ -1,9 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="GlassFish 5.0.0 Remote AWS" type="GlassfishConfiguration" factoryName="Remote" APPLICATION_SERVER_NAME="GlassFish 5.0.0" ALTERNATIVE_JRE_ENABLED="false">
-    <option name="HOST" value="ec2-13-48-28-82.eu-north-1.compute.amazonaws.com" />
+    <option name="HOST" value="ec2-13-53-175-23.eu-north-1.compute.amazonaws.com" />
+    <option name="PORT" value="9475" />
     <option name="LOCAL" value="false" />
     <option name="OPEN_IN_BROWSER" value="false" />
-    <option name="OPEN_IN_BROWSER_URL" value="http://ec2-13-48-28-82.eu-north-1.compute.amazonaws.com:9475/HouseServer_war_exploded/" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://ec2-13-53-175-23.eu-north-1.compute.amazonaws.com:9475/HouseServer_war_exploded/" />
     <option name="UPDATING_POLICY" value="hot-swap-classes" />
     <deployment>
       <artifact name="HouseServer:war exploded">
@@ -52,9 +53,6 @@
     </RunnerSettings>
     <method v="2">
       <option name="Make" enabled="true" />
-      <option name="BuildArtifacts" enabled="true">
-        <artifact name="HouseServer:war exploded" />
-      </option>
       <option name="BuildArtifacts" enabled="true">
         <artifact name="HouseServer:war exploded" />
       </option>

@@ -39,7 +39,7 @@ public class CommandProtocol {
             returnObject.put("result", 0);
         }
 
-        Database.getInstance().commandLog(jsonObject);
+        Database.getInstance().commandLog(jsonObject.put("request", "command"));
 
         return returnObject;
     }

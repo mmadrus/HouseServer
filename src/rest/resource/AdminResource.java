@@ -1,6 +1,8 @@
 package rest.resource;
 
 import org.json.JSONObject;
+import rest.database.Database;
+import rest.protocols.JSONProtocol;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -12,6 +14,8 @@ public class AdminResource {
     @PUT
     public Response checkLogin (String json) {
 
-        return Response.ok(new JSONObject().put("result", 1).toString()).build();
+        JSONObject jsonObject = JSONProtocol.getInstance().toJson(json);
+
+        return Response.ok(Database.getInstance().adminLogin(jsonObject).toString()).build();
     }
 }

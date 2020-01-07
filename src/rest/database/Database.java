@@ -272,22 +272,45 @@ public class Database  {
         }
     }
 
-    public void testHouse (JSONObject jsonObject) {
-
-        dbCollection = databaseObj.getCollection("test");
-        document = new BasicDBObject();
+    public JSONObject adminLogin (JSONObject jsonObject) {
 
         try {
 
-            dbCollection.getCount();
-            document.put("Date", new Date());
-            document.put("User-command", jsonObject.toString());
-            dbCollection.insert(document);
+            String jsonString = jsonObject.toString();
 
+            dbCollection = databaseObj.getCollection("users");
+            document = new BasicDBObject();
+            gson = new Gson();
+            User user = gson.fromJson(jsonString, User.class);
+            document.put("username", jsonObject.getString("username"));
+            boolean isAdmin = false;
+
+            cursor = dbCollection.find(document);
+
+            String temp = "";
+
+            while (cursor.hasNext()) {
+
+                fetchedObject = cursor.next();
+                if (fetchedObject.get("username").equals(user.getUsername())) {
+                    temp = cryption.cryption((String) fetchedObject.get("password"),2);
+                    if (temp.equals(user.getPassword())) {
+                        isAdmin = (boolean) fetchedObject.get("isAdmin");
+                        if (isAdmin) {
+                            return new JSONObject().put("result", 1);
+                        }
+                    }
+                }
+            }
+
+            return new JSONObject().put("result", 0);
 
         } catch (Exception e) {
+
             e.printStackTrace();
+            return new JSONObject().put("result", 0);
         }
+
     }
 
     //PUT/COMMAND.docx
@@ -541,6 +564,10 @@ public class Database  {
                 dbCollection.insert(BasicDBObject.parse(fromServer.toString()));
                 //commandLog(fromServer, 7);
 
+                if (Stats.getInstance().isAdminOnline()) {
+                    sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
+                }
+
                 return successJson.put("result", 1).put("deviceID", actualDeviceId);
 
             } else {
@@ -591,6 +618,10 @@ public class Database  {
 
             successJson.put("result", 1);
             successJson.put("houseID", nextHouseId);
+
+            if (Stats.getInstance().isAdminOnline()) {
+                sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
+            }
 
             return successJson;
 
@@ -652,6 +683,10 @@ public class Database  {
 
                 failJson.put("result", 0);
                 return failJson;
+            }
+
+            if (Stats.getInstance().isAdminOnline()) {
+                sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
             }
 
             return succesJson;
@@ -724,6 +759,10 @@ public class Database  {
             dbCollection.insert(query);
 
             successJson.put("result", 1);
+
+            if (Stats.getInstance().isAdminOnline()) {
+                sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
+            }
 
             return successJson;
 
@@ -1464,6 +1503,11 @@ public class Database  {
 
                 }
             }
+
+            if (Stats.getInstance().isAdminOnline()) {
+                sendAdmin(Database.getInstance().getDBCount().put("adminCommand", 3).toString());
+            }
+
             return new JSONObject().put("result", 1);
 
         } catch (Exception e) {

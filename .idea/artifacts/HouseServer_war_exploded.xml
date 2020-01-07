@@ -9,6 +9,11 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="org.json:json:20190722" />
           <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="javax.websocket:javax.websocket-api:1.1" />
+          <element id="library" level="project" name="org.glassfish.tyrus:tyrus-server:1.1" />
+          <element id="library" level="project" name="com.fazecast:jSerialComm:2.5.3" />
+          <element id="library" level="project" name="javax.enterprise:cdi-api:2.0" />
+          <element id="library" level="project" name="mongo-java-driver-3.11.2" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="HouseServer/web/Web" />

@@ -72,6 +72,9 @@ public class Database  {
 
 
     public static void main(String[] args) {
+        Database database = Database.getInstance();
+
+        database.getAllUsers();
     }
 
     private Database() {

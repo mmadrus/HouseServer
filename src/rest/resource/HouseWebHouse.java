@@ -21,7 +21,6 @@ public class HouseWebHouse {
                                @PathParam("houseName") String housename) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseName", housename.replace("-", " "));
-        Database.getInstance().commandLog(jsonObject);
         JSONObject object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -32,6 +31,8 @@ public class HouseWebHouse {
             object = new JSONObject().put("result", 0);
         }
 
+        Database.getInstance().commandLog(jsonObject.put("request", "getUserHouses"));
+
         return Response.ok(object.toString(1)).build();
     }
 
@@ -41,7 +42,6 @@ public class HouseWebHouse {
                               @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
-        Database.getInstance().commandLog(jsonObject);
         JSONObject object = new JSONObject();
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -51,6 +51,8 @@ public class HouseWebHouse {
 
             object = new JSONObject().put("result", "fail");
         }
+
+        Database.getInstance().commandLog(jsonObject.put("request", "getHouseRoom"));
 
         return Response.ok(object.toString()).build();
     }

@@ -21,7 +21,6 @@ public class DeviceParamResource {
                                      @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
-        Database.getInstance().commandLog(jsonObject.put("request", "getDevice"));
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -31,6 +30,8 @@ public class DeviceParamResource {
 
             jsonArray = new JSONArray().put(new JSONObject().put("result", 0));
         }
+
+        //Database.getInstance().commandLog(jsonObject.put("request", "getDevice"));
 
         return Response.ok(jsonArray.toString()).build();
 
@@ -42,7 +43,6 @@ public class DeviceParamResource {
                                      @PathParam("houseID") int houseID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
-        Database.getInstance().commandLog(jsonObject.put("request", "getAlarm"));
         JSONArray jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -52,6 +52,8 @@ public class DeviceParamResource {
 
             jsonArray = new JSONArray().put(new JSONObject().put("result", 0).put("fail", "token"));
         }
+
+        //Database.getInstance().commandLog(jsonObject.put("request", "getAlarm"));
 
         return Response.ok(jsonArray.toString()).build();
 
@@ -63,7 +65,7 @@ public class DeviceParamResource {
                                     @PathParam("houseID") int houseID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
-        Database.getInstance().commandLog(jsonObject.put("request", "getSensor"));
+
         JSONObject jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -71,8 +73,10 @@ public class DeviceParamResource {
 
         } else {
 
-            jsonArray = new JSONObject().put("result", 0);
+            jsonArray = new JSONObject().put("result", 0).put("fail", "token");
         }
+
+        //Database.getInstance().commandLog(jsonObject.put("request", "getSensor"));
 
         return Response.ok(jsonArray.toString()).build();
 
@@ -84,7 +88,6 @@ public class DeviceParamResource {
                                   @PathParam("username") String username) {
 
         JSONObject jsonObject = new JSONObject().put("deviceID", deviceID).put("token", token).put("username", username);
-        Database.getInstance().commandLog(jsonObject.put("request", "deleteDevice"));
         JSONObject jsonArray = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -94,6 +97,8 @@ public class DeviceParamResource {
 
             jsonArray = new JSONObject().put("result", 0);
         }
+
+        //Database.getInstance().commandLog(jsonObject.put("request", "deleteDevice"));
 
         return Response.ok(jsonArray.toString()).build();
     }

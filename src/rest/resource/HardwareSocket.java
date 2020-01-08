@@ -47,9 +47,14 @@ public class HardwareSocket {
                 id = str.substring(0,4);
                 result = str.substring(4);
 
-            } else {
+            } else if (str.length() < 10){
                 id = (str.substring(0,5));
                 result = (str.substring(5));
+
+            } else {
+                id = str.substring(0,4);
+                result = str.substring(4,5);
+
             }
 
 

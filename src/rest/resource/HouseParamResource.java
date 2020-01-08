@@ -21,7 +21,7 @@ public class HouseParamResource {
                                     @PathParam("roomID") int roomID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("roomID", roomID);
-        Database.getInstance().commandLog(jsonObject.put("request", "getRoomDevices"));
+
         JSONObject object = new JSONObject();
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -32,6 +32,8 @@ public class HouseParamResource {
             object = new JSONObject().put("result", "fail");
         }
 
+        Database.getInstance().commandLog(jsonObject.put("request", "getRoomDevices"));
+
         return Response.ok(object.toString(1)).build();
     }
 
@@ -41,7 +43,7 @@ public class HouseParamResource {
                                    @PathParam("houseID") int houseID) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token).put("houseID", houseID);
-        Database.getInstance().commandLog(jsonObject.put("request", "getHouseRooms"));
+
         JSONObject object = new JSONObject();
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -52,6 +54,8 @@ public class HouseParamResource {
             object = new JSONObject().put("result", "fail");
         }
 
+        Database.getInstance().commandLog(jsonObject.put("request", "getHouseRooms"));
+
         return Response.ok(object.toString(1)).build();
     }
 
@@ -60,8 +64,7 @@ public class HouseParamResource {
     public Response getUserHouses (@PathParam("username") String username, @PathParam("token") String token) {
 
         JSONObject jsonObject = new JSONObject().put("username", username).put("token", token);
-        Database.getInstance().commandLog(jsonObject.put("request", "getUserHouses"));
-        Database.getInstance().commandLog(jsonObject);
+
         JSONArray object = null;
         if (TokenProtocol.getInstance().isAlive(jsonObject.getString("token"))) {
 
@@ -71,6 +74,8 @@ public class HouseParamResource {
 
             object = new JSONArray().put(new JSONObject().put("result", 0));
         }
+
+        Database.getInstance().commandLog(jsonObject.put("request", "getUserHouses"));
 
         return Response.ok(object.toString(1)).build();
     }

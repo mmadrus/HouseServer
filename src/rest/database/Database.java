@@ -1472,7 +1472,7 @@ public class Database  {
         } catch (Exception e) {
 
             e.printStackTrace();
-            return new JSONObject().put("result", 0);
+            return new JSONObject().put("result", 0).put("fail", "db");
         }
     }
 

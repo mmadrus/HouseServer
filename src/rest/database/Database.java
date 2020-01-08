@@ -1606,7 +1606,8 @@ public class Database  {
                 if (fetchedObject.get("deviceID").equals(jsonObject.getInt("deviceID"))) {
 
                     query = new BasicDBObject();
-                    query.append("$set", new BasicDBObject().append("value", jsonObject.getDouble("command") + (double) fetchedObject.get("value")));
+                    query.append("$set", new BasicDBObject().append("value",
+                            (double) Math.round((jsonObject.getDouble("command") + (double) fetchedObject.get("value")) * 100) / 100));
                     BasicDBObject search = new BasicDBObject().append("deviceID", jsonObject.getInt("deviceID"));
                     dbCollection.update(search, query);
 

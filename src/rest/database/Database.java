@@ -1459,15 +1459,15 @@ public class Database  {
                     switch ((int) fetchedObject.get("deviceID")) {
 
                         case 11053:
-                            finalObject.put("internalTemp", fetchedObject.get("status"));
+                            finalObject.put("internalTemp", fetchedObject.get("value"));
                             break;
 
                         case 11063:
-                            finalObject.put("externalTemp", fetchedObject.get("status"));
+                            finalObject.put("externalTemp", fetchedObject.get("value"));
                             break;
 
                         case  11073:
-                            finalObject.put("electricalConsumption", fetchedObject.get("status"));
+                            finalObject.put("electricalConsumption", fetchedObject.get("value"));
                             break;
                     }
 
@@ -1572,8 +1572,41 @@ public class Database  {
                 if (fetchedObject.get("deviceID").equals(jsonObject.getInt("deviceID"))) {
 
                     query = new BasicDBObject();
-                    query.append("$set", new BasicDBObject().append("celsius", jsonObject.getInt("celsius")));
-                    query.append("$set", new BasicDBObject().append("fahrenheit", jsonObject.getInt("fahrenheit")));
+                    query.append("$set", new BasicDBObject().append("value", jsonObject.getDouble("command")));
+                    BasicDBObject search = new BasicDBObject().append("deviceID", jsonObject.getInt("deviceID"));
+                    dbCollection.update(search, query);
+
+                    return new JSONObject().put("result", 1);
+                }
+            }
+
+            return new JSONObject().put("result", 0);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return new JSONObject().put("result", 0);
+        }
+    }
+
+    public  JSONObject updateElectric (JSONObject jsonObject) {
+
+        try {
+
+            dbCollection = databaseObj.getCollection("devices");
+
+            document = new BasicDBObject();
+            document.put("deviceID", jsonObject.getInt("deviceID"));
+            cursor = dbCollection.find(document);
+
+            while (cursor.hasNext()) {
+
+                fetchedObject = cursor.next();
+
+                if (fetchedObject.get("deviceID").equals(jsonObject.getInt("deviceID"))) {
+
+                    query = new BasicDBObject();
+                    query.append("$set", new BasicDBObject().append("value", jsonObject.getDouble("command") + (double) fetchedObject.get("value")));
                     BasicDBObject search = new BasicDBObject().append("deviceID", jsonObject.getInt("deviceID"));
                     dbCollection.update(search, query);
 

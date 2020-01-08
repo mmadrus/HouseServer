@@ -48,13 +48,29 @@ public class HardwareSocket {
                 result = str.substring(4);
 
             } else {
-                result = (str.substring(0,5));
-                id = (str.substring(5));
+                id = (str.substring(0,5));
+                result = (str.substring(5));
             }
 
 
-            Database.getInstance().updateDeviceStatus(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Integer.parseInt(result)));
-            //sendAdmin(new JSONObject().put("adminCommand", 4).put("id", id).put("result", result).toString());
+            switch (Integer.parseInt(id)) {
+
+                case 11053:
+
+                case 11063:
+                    Database.getInstance().updateTempDevice(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Double.parseDouble(result)));
+                    break;
+
+                case 11073:
+                    Database.getInstance().updateElectric(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Double.parseDouble(result)));
+                    break;
+
+                default:
+                    Database.getInstance().updateDeviceStatus(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Integer.parseInt(result)));
+                    break;
+            }
+            //Database.getInstance().updateDeviceStatus(new JSONObject().put("deviceID", Integer.parseInt(id)).put("command", Integer.parseInt(result)));
+            sendAdmin(new JSONObject().put("adminCommand", 4).put("id", id).put("result", result).toString());
 
         } catch (Exception e) {
             e.printStackTrace();

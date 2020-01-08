@@ -17,8 +17,8 @@ public class HardwareService extends Thread {
 
     private HardwareService () {
 
-        //this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001sHl");
-        this.serialPort = SerialPort.getCommPort("/dev/cu.usbmodem14101");
+        this.serialPort = SerialPort.getCommPort("/dev/cu.usbserial-A4001KMk");
+        //this.serialPort = SerialPort.getCommPort("/dev/cu.usbmodem14101");
         this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
         if (connectedToPort()) {
             this.inputStream = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
@@ -67,7 +67,9 @@ public class HardwareService extends Thread {
 
     private boolean connectedToPort () {
 
+        System.out.println(serialPort.getSystemPortName());
         serialPort.openPort();
+        System.out.println(serialPort.getSystemPortName());
 
         try {
 
@@ -80,11 +82,11 @@ public class HardwareService extends Thread {
         return serialPort.isOpen();
     }
 
-    public String send (JSONObject jsonObject) {
+    public String send (String jsonObject) {
 
         try {
 
-            int i = jsonObject.getInt("command");
+            int i = Integer.parseInt(jsonObject);
             System.out.println("COMMAND: " + i);
 
             outputStream.write(i);

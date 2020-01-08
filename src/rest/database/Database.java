@@ -2,19 +2,12 @@ package rest.database;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.*;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import rest.models.Token;
@@ -66,7 +59,7 @@ public class Database  {
     private MongoCredential mongoCredential = null;
     private DB databaseObj;
 
-    private Cryption cryption = new Cryption();
+    private Encryption cryption = new Encryption();
 
 
 
@@ -1656,7 +1649,7 @@ public class Database  {
     }
 
 
-    private class Cryption {
+    private class Encryption {
 
     /*
     The encryptor/decryptor class.
